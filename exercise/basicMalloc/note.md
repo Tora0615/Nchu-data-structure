@@ -29,3 +29,28 @@ intptr = (int *)malloc(sizeof(int));
 程式執行時，記憶體分配如下
 
 ![](./pic/memoryStruct.jpeg)
+
+## malloc 失敗偵測
+可在 malloc 同時加上判斷式，若失敗則退出程式。
+
+### 寫法Ａ
+
+```C
+if((intptr = (int *)malloc(sizeof(int))) == NULL ||
+(floatptr = (float *)malloc(sizeof(float))) == NULL){
+  printf("malloc failed\n");
+  exit(EXIT_FAILURE);   
+}
+```
+### 寫法Ｂ
+```c
+if(!(intptr = (int *)malloc(sizeof(int))) ||
+!( floatptr = (float *)malloc(sizeof(float)) ) ){
+  printf("malloc failed\n");
+  exit(EXIT_FAILURE);
+}
+```
+
+* 註：
+1. 只要遇到 exit( ) 就會退出程式，不論傳入值為何
+2. EXIT_SUCCESS 為 0 ; EXIT_FAILURE 為 1
