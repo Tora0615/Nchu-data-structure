@@ -53,4 +53,4 @@ dkms.conf
 
 # output file folder
 out
-temp.c
+temp*
