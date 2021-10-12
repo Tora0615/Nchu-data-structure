@@ -54,3 +54,28 @@ if(!(intptr = (int *)malloc(sizeof(int))) ||
 * 註：
 1. 只要遇到 exit( ) 就會退出程式，不論傳入值為何
 2. EXIT_SUCCESS 為 0 ; EXIT_FAILURE 為 1
+
+## 利用巨集 (Macro) 來簡化 malloc
+
+* 說明
+  * Macro 的內容在編譯前，會經過預處理 (preprocess) 進行字串代換
+
+* 程式碼
+要加在程式 include 區域下面
+```c
+#define MALLOC(ptrVar,size){ \
+  if(!(ptrVar = malloc(size))){ \
+    printf("malloc failed\n"); \
+    exit(EXIT_FAILURE); \
+  } \
+}
+```
+
+* 使用：
+```c
+// 格式
+MALLOC(指標變數,要的空間大小);
+
+// 例子
+MALLOC(intptr,sizeof(int));
+```
