@@ -30,7 +30,7 @@ int main(int argc, char const *argv[]) {
   *intptr = 1234;
   *floatptr = 12.34;
 
-  printf("basic malloc called\n");
+  printf("malloc with detection called\n");
   printf("int : %d\n", *intptr);
   printf("float : %f\n", *floatptr);
 
