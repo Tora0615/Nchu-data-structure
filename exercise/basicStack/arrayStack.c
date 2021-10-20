@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #define TRUE 1
 #define FALSE 0
+#define MAX_STACK_SIZE 100
 
-# define MAX_STACK_SIZE 100
 int stack[MAX_STACK_SIZE];
 int top = -1;
 
@@ -22,11 +22,20 @@ int isEmpty(){
 }
 
 
+void stackEmpty(){
+  printf("Error : stack is empty ! \n");
+  exit(EXIT_FAILURE);
+}
+
+void stackFull(){
+  printf("Error : stack is full ! \n");
+  exit(EXIT_FAILURE);
+}
+
 
 void push(int data){
   if (isFull()) {
-    printf("Error : stack is full ! \n");
-    //exit(EXIT_FAILURE);
+    stackFull();
   }else{
     stack[++top] = data;
   }
@@ -35,18 +44,15 @@ void push(int data){
 
 int pop(){
   if(isEmpty()){
-    printf("Error : stack is empty ! \n");
-    //exit(EXIT_FAILURE);
+    stackEmpty();
   }
   return stack[top--];
 }
 
 
-
-
 int main(int argc, char const *argv[]) {
   int i;
-  for (i = 0; i < 10; i++) {
+  for (i = 0; i < 5; i++) {
     printf("Push : %d\n",i);
     push(i);
   }
