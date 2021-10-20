@@ -1,5 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
+#define TRUE 1
+#define FALSE 0
 
 # define MAX_STACK_SIZE 100
 int stack[MAX_STACK_SIZE];
@@ -7,16 +9,16 @@ int top = -1;
 
 int isFull(){
   if(top > MAX_STACK_SIZE - 1){
-    return 1;
+    return TRUE;
   }
-  return 0;
+  return FALSE;
 }
 
 int isEmpty(){
   if(top == -1){
-    return 1;
+    return TRUE;
   }
-  return 0;
+  return FALSE;
 }
 
 

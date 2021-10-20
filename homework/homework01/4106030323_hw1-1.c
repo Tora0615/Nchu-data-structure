@@ -9,8 +9,9 @@ const char *filename_output = "HW1_output.txt";
 
 
 void process(char* input) {
+  unsigned long int len = strlen(input)-1;
   printf("%s\n",input);
-  printf("%lu\n",strlen(input));
+  printf("%lu\n",len);
   //printf("%c\n",*(input+3)); // print result
   //fprintf(f_write_ptr,"%s",input);  // output to file
 }
@@ -27,10 +28,10 @@ int main(int argc, char const *argv[]) {
     exit(EXIT_FAILURE);
   }
 
-  // output file open
+  // open output file with fool proof.
   if((f_write_ptr = fopen(filename_output,"r"))){
     fclose(f_write_ptr);
-    printf("File %s have already exist, continue to overwrite? [Y/N] ",filename_output);
+    printf("File %s have already exist.\nContinue to overwrite output file ? [Y/N] ",filename_output);
     char temp;
     scanf(" %c",&temp);
     if (temp == 'Y' || temp == 'y'){
