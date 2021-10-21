@@ -35,6 +35,7 @@ void queueFull(){
 
 // 不必檢查 isFull() or isEmpty() --> 改為檢查兩者是否重疊
 void addq(int data){
+  // 加一看有沒有等於最大位置的 Index，有的話就歸零
   rear = (rear+1) % MAX_QUEUE_SIZE; //important
   if(front == rear){  // isFull() 改來的
     queueFull();
@@ -46,6 +47,7 @@ int deleteq(){
   if(front == rear){  // isEmpty() 改來的
     queueEmpty();
   }
+  // 加一看有沒有等於最大位置的 Index，有的話就歸零
   front = (front+1) % MAX_QUEUE_SIZE; //important
   return queue[front];
 }
