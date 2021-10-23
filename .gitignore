@@ -54,3 +54,9 @@ dkms.conf
 # output file folder
 out
 temp*
+
+# 測試資料夾的測資
+test/testData/*
+
+# ppt 暫存檔
+*~$*
