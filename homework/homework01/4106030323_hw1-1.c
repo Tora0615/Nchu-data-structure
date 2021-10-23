@@ -9,7 +9,6 @@
 // TODO :
 // 1. check 相同優先度是否會出錯
 // 2. 優先度表是否要更改
-// 3. 寫檔
 
 int processIndex ;
 int lastIsNum = FALSE;
@@ -212,9 +211,11 @@ void postfix(char* input) {
 
   // 從 ansStack 印出結果
   while ( ! ansIsEmpty() ){
-    printf("%c",ansPop());
+    //printf("%c",ansPop());
+    fprintf(f_write_ptr,"%c",ansPop());
   }
-  printf("\n");
+  //printf("\n");
+  fprintf(f_write_ptr,"\n");
 }
 
 
@@ -243,6 +244,8 @@ int main(int argc, char const *argv[]) {
       fclose(f_read_ptr);
       exit(EXIT_FAILURE);
     }
+  }else {
+    f_write_ptr = fopen(filename_output,"w");
   }
 
   // from input file read line
@@ -261,6 +264,7 @@ int main(int argc, char const *argv[]) {
   fclose(f_read_ptr);
   fclose(f_write_ptr);
 
+  printf("Complete !\n");
   return 0;
 }
 
