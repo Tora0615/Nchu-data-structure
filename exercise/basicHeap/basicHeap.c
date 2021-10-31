@@ -41,7 +41,6 @@ void queueFull(){
 
 
   //加倍
-  printf("full ! ~ x2 \n");
   queue = realloc(queue, sizeof(int) * MAX * multiply);
   multiply *= 2;
 }
@@ -114,27 +113,16 @@ int deleteFromHeap(int *arr){
 int main(int argc, char const *argv[]) {
   queue = calloc(MAX, sizeof(int));
 
-  addToHeap(queue, 10);
-  addToHeap(queue, 28);
-  addToHeap(queue, 20);
-  addToHeap(queue, 22);
-  addToHeap(queue, 24);
-  addToHeap(queue, 13);
-  addToHeap(queue, 10);
-  addToHeap(queue, 28);
-  addToHeap(queue, 20);
-  addToHeap(queue, 22);
-  addToHeap(queue, 24);
-  addToHeap(queue, 13);
-  addToHeap(queue, 10);
-  addToHeap(queue, 28);
-  addToHeap(queue, 20);
-  addToHeap(queue, 22);
-  addToHeap(queue, 24);
-  addToHeap(queue, 13);
-
+  int testData[] = {1,5,8,6,7,4,2,4,3};
 
   int i;
+  for (i = 0; i < 9; i++) {
+    addToHeap(queue, testData[i]);
+  }
+
+
+
+
 
   for (i=0;i<18;i++){
     printf("%d\n", *(queue+i+1));
