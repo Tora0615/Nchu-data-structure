@@ -3,23 +3,53 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
+#define MAX 1
+#define OPER <
 
-FILE *f_write_ptr;
-const char *filename_output = "HW3_output.txt";
+
+
 
 typedef struct _point{
   int x;
   int y;
 } point;
 
+typedef struct _node {
+  int x;
+  int y;
+  int cost;
+  int isPassed;
+  int isSpecial;
+  int height;
+}node;
+
+FILE *f_write_ptr;
+const char *filename_output = "HW3_output.txt";
+node *queue ;
+
 int getNeighbors(int*, int, int, int);
 void printArr(int*,int);
 void saveToArray(int*, int, char*, int);
+int heightAbs(int, int);
+int isFull();
+int isEmpty();
+void queueFull();
+void swapNode(node*, int, int);
+node deleteFromHeap(node*);
+void addToHeap(node*, node);
+void printStructArr(node*,int);
+int bfs(point, point, int,node[]);
+int rear = 0;  //後面    1開始存，
+int front = 1;  //前面
+int multiply = 2;
+
+
+
 
 int main(int argc, char const *argv[]) {
 
   FILE *f_read_ptr;
-  const char *filename_input = "../testData/input_3.txt"; // 要注意 input file path
+  const char *filename_input = "../testData/input_3_1.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){
@@ -92,8 +122,35 @@ int main(int argc, char const *argv[]) {
       saveToArray(mapData, j*mapSize, contents, mapSize);
     }
 
-    printArr(mapData,mapSize);
-    printf("\n");
+    //printArr(mapData,mapSize);
+    //printf("\n");
+
+
+    queue = calloc(MAX, sizeof(node));
+    node template[mapSize*mapSize];
+
+    // 初始化
+    int k,l;
+    for (k = 0; k < mapSize; k++) {
+      for (l = 0; l < mapSize; l++) {
+        template[k*mapSize+l].x = k ;
+        template[k*mapSize+l].y = l ;
+        template[k*mapSize+l].cost = 0 ;
+        template[k*mapSize+l].isPassed = 0 ;
+        template[k*mapSize+l].isSpecial = 0 ;
+        template[k*mapSize+l].height = *(mapData + k*mapSize + l);
+      }
+    }
+
+    //printStructArr(template,mapSize);
+    printf("%d\n",bfs(start,end[0],mapSize,template));
+
+    // 歸零
+    rear = 0;  //後面    1開始存，
+    front = 1;  //前面
+    multiply = 2;
+
+
 
   }
 
@@ -134,16 +191,139 @@ void printArr(int *arr,int size){
   }
 }
 
-// int getNeighbors(int *arr, int now_x, int now_y, int arr_size){
-//   int dir[8][2] = {
-//     //  左     左上      上      右上     右      右下       下      左下
-//     {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}
-//   };
-//
-//   int i;
-//   for (i = 0; i<8; i++){
-//   }
-// }
+int heightAbs(int a, int b){
+  if (a>b){
+    return a-b;
+  }else{
+    return b-a;
+  }
+}
+
+
+
+int isFull(){
+  if(rear == MAX * multiply / 2 - 1){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+int isEmpty(){
+  if(front == rear){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+void queueFull(){
+  //加倍
+  queue = realloc(queue, sizeof(node) * MAX * multiply);
+  multiply *= 2;
+}
+
+void swapNode(node *arr, int index1, int index2){
+  node temp;
+  temp = *(arr+index1);
+  *(arr+index1) = *(arr+index2);
+  *(arr+index2) = temp;
+}
+
+node deleteFromHeap(node *arr){
+  node returnVal;
+  // root and rear swap
+  swapNode(arr, rear, front);
+  // delete rear
+  returnVal = queue[rear--];
+  // root sink
+  int index = 1;
+  while( ( (arr + index*2)->cost OPER (arr + index)->cost || (arr + index*2+1)->cost OPER (arr + index)->cost ) && (index*2 < rear)){
+    // 下沉要比較，最大堆積要沉到比較大那邊
+    if( (arr + index*2)->cost OPER (arr + index*2 + 1)->cost ){
+      swapNode(arr, index, index*2 );
+      index = index * 2;
+    }else{
+      swapNode(arr, index, index*2+1 );
+      index = index * 2 + 1;
+    }
+  }
+  return returnVal;
+}
+
+void addToHeap(node *arr, node value){
+  // check heap size
+  if(isFull()){
+    queueFull();
+  }
+  // Add to tail
+  *(arr + ++rear) = value;
+  // compare and float to root    // >=1
+  int index = rear;
+  while( ( (arr + index)->cost OPER (arr + index/2)->cost ) && (index/2 >= front)){
+    swapNode(arr, index, index/2 );
+    index = index / 2 ;
+  }
+}
+
+void printStructArr(node *arr,int size){
+  int i,j;
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < size; j++){
+      printf("%d ", (arr + i*size+j)->x);
+      printf("%d ", (arr + i*size+j)->y);
+      printf("%d ", (arr + i*size+j)->cost);
+      printf("%d ", (arr + i*size+j)->isPassed);
+      printf("%d ", (arr + i*size+j)->isSpecial);
+      printf("%d ", (arr + i*size+j)->height);
+      printf("\n");
+    }
+  }
+}
+
+
+int bfs(point start, point end, int size,node array[]){
+  int dir[8][2] = {
+    //  左     左上      上       右上     右      右下       下      左下
+    {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}
+  };
+
+  //printf("%d %d\n",end.x,end.y);
+  //printf("s~%d\n",size);
+
+  addToHeap(queue, array[start.x *size + start.y]);
+
+  node temp ;
+  while(TRUE){
+    temp = deleteFromHeap(queue);
+    while(temp.isPassed){
+      temp = deleteFromHeap(queue);
+    }
+
+    array[temp.x *size + temp.y].isPassed = TRUE;  //走過標記
+
+
+    //printf("temp : %d %d\n",temp.x,temp.y);
+    if(temp.x == end.x && temp.y == end.y){
+      break;
+    }
+    int i;
+    for(i=0;i<8;i++){
+      int tempX = temp.x + dir[i][0];
+      int tempY = temp.y + dir[i][1];
+      //printf("tempXY : %d %d",tempX,tempY);
+      if(tempX > -1 && tempY > -1 && tempX < size && tempY < size ){
+        array[tempX *size + tempY].cost \
+            = heightAbs(array[tempX *size + tempY].height, temp.height) \
+                + temp.cost;
+        //printf(" cost:%d",array[tempX *size + tempY].cost);
+        addToHeap(queue, array[tempX *size + tempY]);
+      }
+      //printf("\n");
+    }
+    //printStructArr(queue,size);
+  }
+  //printStructArr(queue,size);
+  return temp.cost;
+}
 
 
 
