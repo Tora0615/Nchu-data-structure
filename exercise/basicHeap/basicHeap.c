@@ -65,14 +65,15 @@ void addToHeap(int *arr, int value){
     queueFull();
   }
 
-  // Add to rear
+  // Add to tail
   *(arr + ++rear) = value;
   //printf("%d\n", *(arr + rear));
 
   // compare and float to root    // >=1
-  while( (*(arr + rear) OPER *(arr + rear/2)) && (rear/2 >= front)){
-    swapNode(arr, rear, rear/2 );
-
+  int index = rear;
+  while( (*(arr + index) OPER *(arr + index/2)) && (index/2 >= front)){
+    swapNode(arr, index, index/2 );
+    index = index / 2 ;
   }
 
 }
@@ -88,10 +89,8 @@ int deleteFromHeap(int *arr){
 
   // root sink
   int index = 1;
-  while( ( *(arr + index*2 ) OPER *(arr + index) ) && (index*2 < rear)){
-    //printf("%d\n",index);
+  while( ( *(arr + index*2 ) OPER *(arr + index) || *(arr + index*2+1 ) OPER *(arr + index) ) && (index*2 < rear)){
     // 下沉要比較，最大堆積要沉到比較大那邊
-    printf("r%d\n",rear);
     if( *(arr + index*2) OPER *(arr + index*2 + 1) ){
       swapNode(arr, index, index*2 );
       index = index * 2;
@@ -99,13 +98,16 @@ int deleteFromHeap(int *arr){
       swapNode(arr, index, index*2+1 );
       index = index * 2 + 1;
     }
-
   }
-
   return returnVal;
 }
 
 
+// 有可能
+// 20
+// |- 22
+// |- 19
+// 若只比 root > 某邊孩子，可能無法順利下沉
 
 
 
