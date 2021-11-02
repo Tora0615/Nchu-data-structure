@@ -49,7 +49,7 @@ int multiply = 2;
 int main(int argc, char const *argv[]) {
 
   FILE *f_read_ptr;
-  const char *filename_input = "../testData/input_3_1.txt"; // 要注意 input file path
+  const char *filename_input = "../testData/input_3.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){
@@ -70,9 +70,9 @@ int main(int argc, char const *argv[]) {
       fclose(f_read_ptr);
       exit(EXIT_FAILURE);
     }
-  }/*else {
+  }else {
     f_write_ptr = fopen(filename_output,"w");
-  }*/
+  }
 
 
   // from input file read line
@@ -112,6 +112,12 @@ int main(int argc, char const *argv[]) {
       endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
     }
 
+    //有存進去
+    // for (j = 0; j < end_count; j++) {
+    //   printf("%d %d\n", end[j].x, end[j].y);
+    // }
+
+
     int *mapData = (int*)calloc(mapSize*mapSize,sizeof(int));
 
     // 一行一行讀到 array
@@ -142,14 +148,55 @@ int main(int argc, char const *argv[]) {
       }
     }
 
-    //printStructArr(template,mapSize);
-    printf("%d\n",bfs(start,end[0],mapSize,template));
+    // printStructArr(template,mapSize);
+    // printf("%d\n",bfs(start,end[0],mapSize,template));
+    // // 歸零
+    // rear = 0;  //後面    1開始存，
+    // front = 1;  //前面
+    // multiply = 2;
 
-    // 歸零
-    rear = 0;  //後面    1開始存，
-    front = 1;  //前面
-    multiply = 2;
+    //int totalCost = bfs(start,end[0],mapSize,template);
 
+
+    int totalCost;
+    if(end_count == 1){//if only a end_count to go
+      totalCost = bfs(start,end[0],mapSize,template);
+
+      // 歸零
+      rear = 0;  //後面    1開始存，
+      front = 1;  //前面
+      multiply = 2;
+      free(queue);
+    }else{
+      int i,j;
+      point pointBox[end_count+1];
+      pointBox[0] = start;
+      for (i = 0; i < end_count; i++) {
+        pointBox[i+1] = end[i];
+      }
+      int pointToPoint[(end_count+1)*(end_count+1)];
+
+      for (i = 0; i < end_count+1; i++) {
+        for (j = 0; j < end_count+1; j++) {
+          rear = 0;  //後面    1開始存，
+          front = 1;  //前面
+          multiply = 2;
+          queue = calloc(MAX, sizeof(node));
+          //printf("%d\n",bfs(pointBox[i],pointBox[j],mapSize,template));
+          //pointToPoint[i * (end_count+1) + j] = bfs(pointBox[i],pointBox[j],mapSize,template);
+        }
+      }
+
+      for (i = 0; i < end_count+1; i++) {
+        for (j = 0; j < end_count+1; j++) {
+          //printf("%d\n",pointToPoint[i *(end_count+1) + j]);
+        }
+      }
+    }
+    // printf("#%d\n",i);
+    // printf("cost:%d\n",totalCost);
+    fprintf(f_write_ptr,"#%d\n",i);
+    fprintf(f_write_ptr,"cost:%d\n",totalCost);
 
 
   }
@@ -236,7 +283,7 @@ node deleteFromHeap(node *arr){
   returnVal = queue[rear--];
   // root sink
   int index = 1;
-  while( ( (arr + index*2)->cost OPER (arr + index)->cost || (arr + index*2+1)->cost OPER (arr + index)->cost ) && (index*2 < rear)){
+  while( (index*2 < rear) && ((arr + index*2)->cost OPER (arr + index)->cost || (arr + index*2+1)->cost OPER (arr + index)->cost) ){
     // 下沉要比較，最大堆積要沉到比較大那邊
     if( (arr + index*2)->cost OPER (arr + index*2 + 1)->cost ){
       swapNode(arr, index, index*2 );
@@ -258,7 +305,7 @@ void addToHeap(node *arr, node value){
   *(arr + ++rear) = value;
   // compare and float to root    // >=1
   int index = rear;
-  while( ( (arr + index)->cost OPER (arr + index/2)->cost ) && (index/2 >= front)){
+  while( (index/2 >= front) && ((arr + index)->cost OPER (arr + index/2)->cost) ){
     swapNode(arr, index, index/2 );
     index = index / 2 ;
   }
@@ -281,12 +328,17 @@ void printStructArr(node *arr,int size){
 
 
 int bfs(point start, point end, int size,node array[]){
+
+  if(start.x == end.x && start.y == end.y){
+    return 0;
+  }
+
   int dir[8][2] = {
     //  左     左上      上       右上     右      右下       下      左下
     {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}
   };
 
-  //printf("%d %d\n",end.x,end.y);
+  //printf("%d %d ,%d %d\n",start.x,start.y,end.x,end.y);
   //printf("s~%d\n",size);
 
   addToHeap(queue, array[start.x *size + start.y]);
@@ -315,7 +367,10 @@ int bfs(point start, point end, int size,node array[]){
             = heightAbs(array[tempX *size + tempY].height, temp.height) \
                 + temp.cost;
         //printf(" cost:%d",array[tempX *size + tempY].cost);
+        //printf("here1\n");
+        //printf("%d %d\n",tempX,tempY);
         addToHeap(queue, array[tempX *size + tempY]);
+        //printf("here2\n");
       }
       //printf("\n");
     }
