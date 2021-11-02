@@ -3,22 +3,53 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
+#define MAX 1
+#define OPER <
+
+
+
+
+typedef struct _point{
+  int x;
+  int y;
+} point;
+
+typedef struct _node {
+  int x;
+  int y;
+  int cost;
+  int isPassed;
+  int isSpecial;
+  int height;
+}node;
 
 FILE *f_write_ptr;
-const char *filename_output = "HW2_output.txt";
+const char *filename_output = "HW3_output.txt";
+node *queue ;
 
-void toSpareMatrix (int*,int,int);
-void getItemPosition(int*, int, int);
-int getItemCount(int*, int, int);
-int* evolution(int*, int*, int, int);
 int getNeighbors(int*, int, int, int);
 void printArr(int*,int);
 void saveToArray(int*, int, char*, int);
+int heightAbs(int, int);
+int isFull();
+int isEmpty();
+void queueFull();
+void swapNode(node*, int, int);
+node deleteFromHeap(node*);
+void addToHeap(node*, node);
+void printStructArr(node*,int);
+int bfs(point, point, int,node[]);
+int rear = 0;  //後面    1開始存，
+int front = 1;  //前面
+int multiply = 2;
+
+
+
 
 int main(int argc, char const *argv[]) {
 
   FILE *f_read_ptr;
-  const char *filename_input = "../testData/input_2.txt"; // 要注意 input file path
+  const char *filename_input = "../testData/input_3.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){
@@ -48,37 +79,126 @@ int main(int argc, char const *argv[]) {
   char endLineBuf = ' ';
   int dataCount = 0;
 
+  //幾筆資料
   dataCount = (int)fgetc(f_read_ptr) - '0';  //char(ascii) to int
   endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
 
   // 幾筆資料做幾次 陣列大小與存活年代數 的讀取
   int i;
   for (i = 0; i < dataCount; i++) {
-    int size, generation;
-    fscanf(f_read_ptr,"%d", &size);
-    endLineBuf = fgetc(f_read_ptr); //吃掉兩數字間空白
-    fscanf(f_read_ptr,"%d", &generation);
+    int end_count, mapSize;
     char trash[100];
+
+    fscanf(f_read_ptr,"%d", &end_count);
+    endLineBuf = fgetc(f_read_ptr); //吃掉兩數字間空白
+    fscanf(f_read_ptr,"%d", &mapSize);
     fscanf(f_read_ptr,"%[^\n]",trash); //吃掉換行符號前雜值
     endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
-    //printf("%d %d\n",size,generation);
 
-    int *arrData = (int*)malloc(sizeof(int)*size*size);  // 主 array
-    int *tempArr = (int*)malloc(sizeof(int)*size*size);  // 暫存 array
+    point start;
+    fscanf(f_read_ptr,"%d", &start.x);
+    endLineBuf = fgetc(f_read_ptr); //吃掉兩數字間空白
+    fscanf(f_read_ptr,"%d", &start.y);
+    fscanf(f_read_ptr,"%[^\n]",trash); //吃掉換行符號前雜值
+    endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
+
+    point end[end_count];
+    int j;
+    for (j = 0; j < end_count; j++) {
+      fscanf(f_read_ptr,"%d", &end[j].x);
+      endLineBuf = fgetc(f_read_ptr); //吃掉兩數字間空白
+      fscanf(f_read_ptr,"%d", &end[j].y);
+      fscanf(f_read_ptr,"%[^\n]",trash); //吃掉換行符號前雜值
+      endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
+    }
+
+    //有存進去
+    // for (j = 0; j < end_count; j++) {
+    //   printf("%d %d\n", end[j].x, end[j].y);
+    // }
+
+
+    int *mapData = (int*)calloc(mapSize*mapSize,sizeof(int));
 
     // 一行一行讀到 array
-    int j;
-    for (j =0; j<size; j++){
+    for (j =0; j<mapSize; j++){
       char contents[200] = {' '};
       fscanf(f_read_ptr,"%[^\n]",contents); //讀一句存到contents
       endLineBuf = fgetc(f_read_ptr); //吃掉換行符號
-      saveToArray(arrData, j*size, contents, size);
+      saveToArray(mapData, j*mapSize, contents, mapSize);
     }
 
-    arrData = evolution(arrData,tempArr,generation,size);
-    //printArr(arrData,size);
-    // printf("\n");
-    toSpareMatrix(arrData,size,size);
+    //printArr(mapData,mapSize);
+    //printf("\n");
+
+
+    queue = calloc(MAX, sizeof(node));
+    node template[mapSize*mapSize];
+
+    // 初始化
+    int k,l;
+    for (k = 0; k < mapSize; k++) {
+      for (l = 0; l < mapSize; l++) {
+        template[k*mapSize+l].x = k ;
+        template[k*mapSize+l].y = l ;
+        template[k*mapSize+l].cost = 0 ;
+        template[k*mapSize+l].isPassed = 0 ;
+        template[k*mapSize+l].isSpecial = 0 ;
+        template[k*mapSize+l].height = *(mapData + k*mapSize + l);
+      }
+    }
+
+    // printStructArr(template,mapSize);
+    // printf("%d\n",bfs(start,end[0],mapSize,template));
+    // // 歸零
+    // rear = 0;  //後面    1開始存，
+    // front = 1;  //前面
+    // multiply = 2;
+
+    //int totalCost = bfs(start,end[0],mapSize,template);
+
+
+    int totalCost;
+    if(end_count == 1){//if only a end_count to go
+      totalCost = bfs(start,end[0],mapSize,template);
+
+      // 歸零
+      rear = 0;  //後面    1開始存，
+      front = 1;  //前面
+      multiply = 2;
+      free(queue);
+    }else{
+      int i,j;
+      point pointBox[end_count+1];
+      pointBox[0] = start;
+      for (i = 0; i < end_count; i++) {
+        pointBox[i+1] = end[i];
+      }
+      int pointToPoint[(end_count+1)*(end_count+1)];
+
+      for (i = 0; i < end_count+1; i++) {
+        for (j = 0; j < end_count+1; j++) {
+          rear = 0;  //後面    1開始存，
+          front = 1;  //前面
+          multiply = 2;
+          queue = calloc(MAX, sizeof(node));
+          //printf("%d\n",bfs(pointBox[i],pointBox[j],mapSize,template));
+          //pointToPoint[i * (end_count+1) + j] = bfs(pointBox[i],pointBox[j],mapSize,template);
+        }
+      }
+
+      for (i = 0; i < end_count+1; i++) {
+        for (j = 0; j < end_count+1; j++) {
+          //printf("%d\n",pointToPoint[i *(end_count+1) + j]);
+        }
+      }
+    }
+    // printf("#%d\n",i);
+    // printf("cost:%d\n",totalCost);
+    fprintf(f_write_ptr,"#%d\n",i);
+    fprintf(f_write_ptr,"cost:%d\n",totalCost);
+
+
   }
 
 
@@ -92,8 +212,18 @@ int main(int argc, char const *argv[]) {
 // 把讀到的數值 (一句的資料) 存到陣列
 void saveToArray(int *arr, int offset, char *data, int lineLen){
   int i;
-  for(i=0; i<lineLen; i++){
-    *(arr + offset + i) = *(data + i*2) - '0';
+  int temp = 0;
+  int count = 0;
+  for(i=0; i< strlen(data) ; i++){
+    char Buf = ' ';
+    char contents[20] = {' '};
+    if( *(data + i) ==  ' ' || *(data + i) ==  '\0' || *(data + i) ==  '\r'){
+      *(arr + offset + count) = temp;
+      count += 1;
+      temp = 0;
+    }else{
+      temp = temp * 10 + (*(data + i) - '0');
+    }
   }
 }
 
@@ -108,101 +238,151 @@ void printArr(int *arr,int size){
   }
 }
 
-int getNeighbors(int *arr, int now_x, int now_y, int arr_size){
+int heightAbs(int a, int b){
+  if (a>b){
+    return a-b;
+  }else{
+    return b-a;
+  }
+}
+
+
+
+int isFull(){
+  if(rear == MAX * multiply / 2 - 1){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+int isEmpty(){
+  if(front == rear){
+    return TRUE;
+  }
+  return FALSE;
+}
+
+void queueFull(){
+  //加倍
+  queue = realloc(queue, sizeof(node) * MAX * multiply);
+  multiply *= 2;
+}
+
+void swapNode(node *arr, int index1, int index2){
+  node temp;
+  temp = *(arr+index1);
+  *(arr+index1) = *(arr+index2);
+  *(arr+index2) = temp;
+}
+
+node deleteFromHeap(node *arr){
+  node returnVal;
+  // root and rear swap
+  swapNode(arr, rear, front);
+  // delete rear
+  returnVal = queue[rear--];
+  // root sink
+  int index = 1;
+  while( (index*2 < rear) && ((arr + index*2)->cost OPER (arr + index)->cost || (arr + index*2+1)->cost OPER (arr + index)->cost) ){
+    // 下沉要比較，最大堆積要沉到比較大那邊
+    if( (arr + index*2)->cost OPER (arr + index*2 + 1)->cost ){
+      swapNode(arr, index, index*2 );
+      index = index * 2;
+    }else{
+      swapNode(arr, index, index*2+1 );
+      index = index * 2 + 1;
+    }
+  }
+  return returnVal;
+}
+
+void addToHeap(node *arr, node value){
+  // check heap size
+  if(isFull()){
+    queueFull();
+  }
+  // Add to tail
+  *(arr + ++rear) = value;
+  // compare and float to root    // >=1
+  int index = rear;
+  while( (index/2 >= front) && ((arr + index)->cost OPER (arr + index/2)->cost) ){
+    swapNode(arr, index, index/2 );
+    index = index / 2 ;
+  }
+}
+
+void printStructArr(node *arr,int size){
+  int i,j;
+  for (i = 0; i < size; i++) {
+    for (j = 0; j < size; j++){
+      printf("%d ", (arr + i*size+j)->x);
+      printf("%d ", (arr + i*size+j)->y);
+      printf("%d ", (arr + i*size+j)->cost);
+      printf("%d ", (arr + i*size+j)->isPassed);
+      printf("%d ", (arr + i*size+j)->isSpecial);
+      printf("%d ", (arr + i*size+j)->height);
+      printf("\n");
+    }
+  }
+}
+
+
+int bfs(point start, point end, int size,node array[]){
+
+  if(start.x == end.x && start.y == end.y){
+    return 0;
+  }
+
   int dir[8][2] = {
-    //  左     左上      上      右上     右      右下       下      左下
+    //  左     左上      上       右上     右      右下       下      左下
     {0, -1}, {-1, -1}, {-1, 0}, {-1, 1}, {0, 1}, {1, 1}, {1, 0}, {1, -1}
   };
-  int neighborCount = 0;
-  int i;
-  for (i = 0; i<8; i++){
 
-    // 4、5、6、7、8 都死亡 --> return 4 就好
-    if(neighborCount >= 4){
+  //printf("%d %d ,%d %d\n",start.x,start.y,end.x,end.y);
+  //printf("s~%d\n",size);
+
+  addToHeap(queue, array[start.x *size + start.y]);
+
+  node temp ;
+  while(TRUE){
+    temp = deleteFromHeap(queue);
+    while(temp.isPassed){
+      temp = deleteFromHeap(queue);
+    }
+
+    array[temp.x *size + temp.y].isPassed = TRUE;  //走過標記
+
+
+    //printf("temp : %d %d\n",temp.x,temp.y);
+    if(temp.x == end.x && temp.y == end.y){
       break;
     }
-
-    // 要讀得座標
-    int read_x = now_x + dir[i][0];
-    int read_y = now_y + dir[i][1];
-
-    // xy大小
-    int arr_x = arr_size;
-    int arr_y = arr_size;
-
-    // 某處值為 1 -> count++ ; need check range (不小於0 & 不大於size)
-    if( *(arr + read_x*arr_size + read_y) == 1 && \
-      read_y > -1 && read_x > -1 && \
-      read_y < arr_y && read_x < arr_x){
-      neighborCount++;
-    }
-
-  }
-  return neighborCount;
-}
-
-// 傳入有資料的陣列、暫存陣列與要演化幾代
-int* evolution(int *mainArr, int *tempArr, int generation, int size){
-  int gen, i, j;
-  for(gen = 0; gen < generation; gen++){
-    for(i = 0; i<size; i++){
-      for(j = 0; j<size; j++){
-
-        // 0、1、4 (5、6、7、8) --> 死 (0)
-        // 2 --> same
-        // 3 --> 活 (1)
-        switch (getNeighbors(mainArr, i, j, size)) {
-           case 0: case 1: case 4:
-              *(tempArr + i*size + j) = 0;
-              break;
-           case 2:
-              *(tempArr + i*size + j) = *(mainArr + i*size + j);
-              break;
-           case 3:
-              *(tempArr + i*size + j) = 1;
-              break;
-        }
+    int i;
+    for(i=0;i<8;i++){
+      int tempX = temp.x + dir[i][0];
+      int tempY = temp.y + dir[i][1];
+      //printf("tempXY : %d %d",tempX,tempY);
+      if(tempX > -1 && tempY > -1 && tempX < size && tempY < size ){
+        array[tempX *size + tempY].cost \
+            = heightAbs(array[tempX *size + tempY].height, temp.height) \
+                + temp.cost;
+        //printf(" cost:%d",array[tempX *size + tempY].cost);
+        //printf("here1\n");
+        //printf("%d %d\n",tempX,tempY);
+        addToHeap(queue, array[tempX *size + tempY]);
+        //printf("here2\n");
       }
+      //printf("\n");
     }
-
-    // mainArr <-- tempArr <-- newArr
-    // 這只有利用內部的指標變數進行交換，因此要傳出去
-    int* newArr = (int*)calloc(size*size,sizeof(int));  //malloc + 初始化 0 = calloc
-    mainArr = tempArr;  // main 用 temp 覆蓋
-    tempArr = newArr;
+    //printStructArr(queue,size);
   }
-  return mainArr;
+  //printStructArr(queue,size);
+  return temp.cost;
 }
 
-// 印出第一行的基本資訊 (row, col, value)
-int getItemCount(int* arr, int row, int col){
-  int count = 0;
-  for (int i = 0; i < row*col; i++) {
-    if( *(arr + i) == 1 ){
-      count++;
-    }
-  }
-  return count;
-}
 
-// 印出非零項的位置與值
-void getItemPosition(int* arr, int row, int col){
-  int i=0, j=0;
-  for (i = 0; i < row; i++) {
-    for(j = 0; j < col; j++){
-      if( *(arr + i*row + j) != 0 ){
-        //printf("%d %d %d\n", i, j, getNeighbors(arr, i, j, row));
-        fprintf(f_write_ptr,"%d %d %d\n", i, j, getNeighbors(arr, i, j, row));
-      }
-    }
-  }
-}
 
-void toSpareMatrix (int* arr, int row, int col){
-  //printf("%d %d %d\n",row,col,getItemCount(arr,row,col));
-  fprintf(f_write_ptr,"%d %d %d\n",row,col,getItemCount(arr,row,col));
-  getItemPosition(arr,row,col);
-}
+
 
 
 // (-1,-1)  (-1, 0)  (-1,1)

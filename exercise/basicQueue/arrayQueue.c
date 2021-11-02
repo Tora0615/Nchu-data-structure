@@ -5,8 +5,8 @@
 #define MAX_QUEUE_SIZE 100
 
 int queue[MAX_QUEUE_SIZE];
-int rear = -1;
-int front = -1;
+int rear = -1;  //後面
+int front = -1;  //前面
 
 int isFull(){
   if(rear == MAX_QUEUE_SIZE - 1){

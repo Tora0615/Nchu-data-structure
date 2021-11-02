@@ -7,7 +7,7 @@ struct step{
 	int c;//cost
 };
 struct step que[14400];
-int coordinate[10][10] ,map[120][120] ,visit_map[120][120] ,allpossible[130][6];
+int coordinate[10][10] ,map[3][3] ,visit_map[120][120] ,allpossible[130][6];
 int p = 0;
 int energy(int index ,int** list ,int N){//count load cost ex 1->2->3 it would be list[0][1]+list[1][2]+list[2][3]
 	int i = 0 ,cost = 0,tempindex = 0 ,lastindex = 0;
@@ -223,5 +223,15 @@ int main(){
 		}
 
 	}
+
+	int data[] = {1,5,8,6,7,4,2,4,3};
+	int i, j;
+	for (i = 0; i < 3; i++) {
+		for (j = 0; j < 3; j++) {
+			map[i][j] = data[i*3+j];
+		}
+	}
+	int cost = bfs(0 ,0 ,2 ,2,3);
+	printf("%d\n", cost);
 	return 0;
 }
