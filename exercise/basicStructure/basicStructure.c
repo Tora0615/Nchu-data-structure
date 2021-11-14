@@ -23,6 +23,15 @@ typedef struct Node {
 } node;
 // ---> 宣告結構體 Node，並將別名取為 node，其中有指向自我參考結構的指標
 
+// typedef + struct + 自我參考結構 + 用指標的寫法
+// typedef struct Node *nodePointer;
+// typedef struct Node {
+//   int data;
+//   nodePointer next;
+// } node;
+// listPointer 宣告後要 malloc 才能使用
+// listPointer a;
+// a = (listPointer)malloc(sizeof(ListNode));
 
 int main(int argc, char const *argv[]) {
   // 宣告兩個節點
