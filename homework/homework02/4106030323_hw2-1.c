@@ -15,7 +15,7 @@ typedef struct listNode {
 } ListNode;
 
 FILE *f_write_ptr;
-const char *filename_output = "HW1_output_1-1.txt";
+const char *filename_output = "output_1.txt";
 listPointer first = NULL;
 int nodeCount = 0;
 void initLinkedList(char *);
@@ -33,7 +33,7 @@ void reverseGroupOfXItems(int);
 
 int main(int argc, char const *argv[]) {
   FILE *f_read_ptr;
-  const char *filename_input = "../testData/test_case_1-2/input_1.txt"; // 要注意 input file path
+  const char *filename_input = "../testData/test_case_1-3/input_1.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){
@@ -54,9 +54,9 @@ int main(int argc, char const *argv[]) {
       fclose(f_read_ptr);
       exit(EXIT_FAILURE);
     }
-  }/*else {
+  }else {
     f_write_ptr = fopen(filename_output,"w");
-  }*/
+  }
 
 
   // from input file read line
@@ -279,14 +279,17 @@ void reverseGroupOfXItems(int groupCount){
 // 印出全部
 void showLinkedList(void){
   listPointer now = first;
-  printf("%d ",now->data);
+  //printf("%d ",now->data);
   //printf("%p : %d\n",now,now->data);
+  fprintf(f_write_ptr,"%d ",now->data);
   while(now->link){
     now = (now->link);
-    printf("%d ",now->data);
+    //printf("%d ",now->data);
     //printf("%p : %d\n",now,now->data);
+    fprintf(f_write_ptr,"%d ",now->data);
   }
-  printf("\n");
+  //printf("\n");
+  fprintf(f_write_ptr,"\n");
 }
 
 // list 資料初始化
@@ -362,6 +365,6 @@ void decodeOp(char *contents){
       );
       break;
   }
-  printf("op : %c ", contents[0]);
-  showLinkedList();
+  //printf("op : %c ", contents[0]);
+  //showLinkedList();
 }
