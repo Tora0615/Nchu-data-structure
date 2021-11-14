@@ -20,7 +20,7 @@ show
 del 16
 add 158
 rev 19
-mul 25 2
+mul 20 2
 ins 9 49
 mul 8 3
 add 180
@@ -34,7 +34,7 @@ show
 rev 28
 ins 18 79
 ins 4 69
-mul 29 11
+mul 25 11
 rev 14
 add 241
 ins 12 99
@@ -45,12 +45,12 @@ mul 1 4
 rev 232
 del 250
 add 28
-ins 78 46
+ins 7 46
 mul 18 74
 add 120
 add 287
-ins 139 33
-ins 40 49
+ins 13 33
+ins 4 49
 del 179
 del 169
 add 39

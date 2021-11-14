@@ -2,23 +2,23 @@
 120
 add 677
 del 3
-show
-ins 0 156
+ins 1 156
 rev 7
 add 808
+show
 add 828
 add 739
-mul 27 2
+mul 27 0
 add 733
 rev 37
 add 785
 add 476
 mul 7 12
 rev 45
-show
 del 45
 del 31
 mul 17 3
+show
 ins 35 410
 add 711
 del 5
@@ -37,7 +37,7 @@ del 9
 del 50
 ins 22 270
 mul 27 13
-mul 30 16
+mul 3 16
 rev 22
 add 260
 del 22
@@ -45,7 +45,6 @@ ins 16 410
 mul 30 20
 rev 50
 mul 29 7
-show
 add 542
 add 222
 add 585
@@ -54,10 +53,10 @@ rev 30
 mul 17 15
 add 710
 mul 27 5
-mul 0 10
+mul 1 10
 add 726
 ins 25 220
-ins 60 118
+ins 40 118
 mul 17 12
 mul 11 8
 rev 52
@@ -66,7 +65,7 @@ ins 33 266
 rev 28
 del 44
 add 528
-mul 64 3
+mul 14 3
 mul 43 11
 del 3
 add 406
@@ -77,7 +76,7 @@ ins 13 313
 mul 22 2
 add 671
 ins 58 326
-ins 67 232
+ins 37 232
 add 652
 ins 22 267
 add 573
@@ -90,12 +89,12 @@ ins 59 331
 mul 35 6
 rev 28
 mul 1 9
-show
 add 565
 del 38
 rev 51
 del 18
 ins 22 126
+show
 ins 45 180
 del 17
 mul 55 12
@@ -109,9 +108,10 @@ add 857
 del 27
 add 197
 mul 28 7
-ins 51 149
+ins 41 149
 del 53
 mul 74 8
+show
 rev 53
 del 22
 add 463
