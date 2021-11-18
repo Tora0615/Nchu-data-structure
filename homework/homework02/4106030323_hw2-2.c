@@ -7,6 +7,35 @@
 FILE *f_write_ptr;
 const char *filename_output = "output_2.txt";
 
+typedef struct _ordernode *orderpointer;
+typedef struct _ordernode{
+  int order_ID;
+  char *recipe_name;
+  int arrival;
+  int deadline;
+  int money;
+  int punishment;
+  orderpointer pre;
+  orderpointer next;
+} ordernode;
+
+typedef struct _componentnode *componentpointer;
+typedef struct _componentnode {
+  char *name;
+  componentpointer pre;
+  componentpointer next;
+} componentnode;
+
+typedef struct _recipiesnode *recipiespointer;
+typedef struct _recipiesnode {
+  char* recipe_name;
+  componentpointer stove;
+  componentpointer cut;
+  componentpointer others;
+  recipiespointer pre;
+  recipiespointer next;
+} recipiesnode;
+
 int main(int argc, char const *argv[]) {
   FILE *f_read_ptr;
   char *filename_input = "../testData/test_case_2-1/orders.txt"; // 要注意 input file path
