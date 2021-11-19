@@ -90,12 +90,26 @@ void readOrders(FILE *f_write_ptr, orderpointer orderHead){
   fscanf(f_write_ptr,"%[^\n]",context);
   buf = fgetc(f_write_ptr);
 
+  // get data count
   int i = 0, range = 0;
   while(context[i] != '\0' && context[i] != '\r'){
     range = range * 10 + context[i] - '0' ;
     i+=1;
   }
-  printf("count : %d\n",range);
+  //printf("count : %d\n",range);
+
+  // save data to linked list
+  for(i = 0; i<range ; i++){
+    int j;
+    for (j = 0; j < 5; j++) {
+      fscanf(f_write_ptr,"%[^ ]",context);
+      buf = fgetc(f_write_ptr);
+      printf("%s\n",context);
+    }
+    fscanf(f_write_ptr,"%[^\n]",context);
+    buf = fgetc(f_write_ptr);
+    printf("%s\n",context);
+  }
 }
 
 void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
@@ -104,10 +118,55 @@ void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
   fscanf(f_write_ptr,"%[^\n]",context);
   buf = fgetc(f_write_ptr);
 
+  // get data count
   int i = 0, range = 0;
   while(context[i] != '\0' && context[i] != '\r'){
     range = range * 10 + context[i] - '0' ;
     i+=1;
   }
-  printf("count : %d\n",range);
+  //printf("count : %d\n",range);
+
+  // save data to linked list
+  for(i = 0; i<range ; i++){
+    int j;
+    for (j = 0; j < 4; j++) {
+      // fscanf(f_write_ptr,"%[^ ]",context);
+      fscanf(f_write_ptr,"%[^ &&[^\n]]",context);  //不等於空格(^ )以及不等於換行符號(^\n)
+      buf = fgetc(f_write_ptr);
+      //printf("%s\n",context);
+
+      int k = 0;
+      char *tempStr = malloc(sizeof(char)*100);
+      int startIndex = 0;
+      tempStr[0] = '\0';
+      while(context[k] != '\r' && context[k] != '\n' && context[k] != '\0'){
+        if(context[k] == ',' || context[k] == ' '){
+          tempStr = &context[startIndex];
+          tempStr[k] = '\0';
+          printf("%s\n",tempStr);
+
+          // 歸零 & Index 初始位置移動
+          tempStr[0] = '\0';
+          startIndex = k+1;
+        }
+        k+=1;
+      }
+      tempStr = &context[startIndex];
+      tempStr[k] = '\0';
+      printf("%s\n",tempStr);
+    }
+  }
 }
+
+
+
+void addNode(){
+
+}
+
+
+
+// 排序到達的，先到的先做
+
+
+// %[ ]	一个字符集
