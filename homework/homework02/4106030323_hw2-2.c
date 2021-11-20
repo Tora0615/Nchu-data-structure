@@ -101,14 +101,32 @@ void readOrders(FILE *f_write_ptr, orderpointer orderHead){
   // save data to linked list
   for(i = 0; i<range ; i++){
     int j;
-    for (j = 0; j < 5; j++) {
-      fscanf(f_write_ptr,"%[^ ]",context);
+    for (j = 0; j < 6; j++) {
+      fscanf(f_write_ptr,"%[^ &&[^\n]]",context);
       buf = fgetc(f_write_ptr);
-      printf("%s\n",context);
+
+      //change here
+      switch (j) {
+        case 0:
+          printf("order_ID : %s\n",context);
+          break;
+        case 1:
+          printf("recipe_name : %s\n",context);
+          break;
+        case 2:
+          printf("arrival : %s\n",context);
+          break;
+        case 3:
+          printf("deadline : %s\n",context);
+          break;
+        case 4:
+          printf("money : %s\n",context);
+          break;
+        case 5:
+          printf("punishment : %s\n",context);
+          break;
+      }
     }
-    fscanf(f_write_ptr,"%[^\n]",context);
-    buf = fgetc(f_write_ptr);
-    printf("%s\n",context);
   }
 }
 
@@ -140,10 +158,25 @@ void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
       int startIndex = 0;
       tempStr[0] = '\0';
       while(context[k] != '\r' && context[k] != '\n' && context[k] != '\0'){
-        if(context[k] == ',' || context[k] == ' '){
+        if(context[k] == ','){
           tempStr = &context[startIndex];
           tempStr[k] = '\0';
-          printf("%s\n",tempStr);
+
+          //change here
+          switch (j) {
+            case 0:
+              printf("recipe_name : %s\n",tempStr);
+              break;
+            case 1:
+              printf("stove : %s\n",tempStr);
+              break;
+            case 2:
+              printf("cut : %s\n",tempStr);
+              break;
+            case 3:
+              printf("others : %s\n",tempStr);
+              break;
+          }
 
           // 歸零 & Index 初始位置移動
           tempStr[0] = '\0';
@@ -153,15 +186,25 @@ void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
       }
       tempStr = &context[startIndex];
       tempStr[k] = '\0';
-      printf("%s\n",tempStr);
+
+      //change here
+      switch (j) {
+        case 0:
+          printf("recipe_name : %s\n",tempStr);
+          break;
+        case 1:
+          printf("stove : %s\n",tempStr);
+          break;
+        case 2:
+          printf("cut : %s\n",tempStr);
+          break;
+        case 3:
+          printf("others : %s\n",tempStr);
+          break;
+      }
+
     }
   }
-}
-
-
-
-void addNode(){
-
 }
 
 
