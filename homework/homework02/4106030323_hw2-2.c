@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #define TRUE 1
 #define FALSE 0
 #define orderPATH "../testData/test_case_2-1/orders.txt"
@@ -40,8 +41,9 @@ typedef struct _recipesnode {
 } recipesnode;
 
 
-void readOrders(FILE*, orderpointer);
+orderpointer readOrders(FILE*, orderpointer);
 void readRecipe(FILE*, recipespointer);
+int getValue(char*);
 
 int main(int argc, char const *argv[]) {
   FILE *f_read_ptr;
@@ -54,7 +56,8 @@ int main(int argc, char const *argv[]) {
     printf("Cannot open file : %s\n", filename_input);
     exit(EXIT_FAILURE);
   }
-  readOrders(f_read_ptr, orderHead);
+  orderHead = readOrders(f_read_ptr, orderHead);  //傳指標進去是複製一份....，要再傳出來
+
 
   filename_input = recipePATH; // 要注意 input file path
   // input file recipe open
@@ -84,11 +87,12 @@ int main(int argc, char const *argv[]) {
 }
 
 
-void readOrders(FILE *f_write_ptr, orderpointer orderHead){
+orderpointer readOrders(FILE *f_write_ptr, orderpointer orderHead){
   char buf;
   char context[100];
   fscanf(f_write_ptr,"%[^\n]",context);
   buf = fgetc(f_write_ptr);
+  orderpointer pre = NULL;
 
   // get data count
   int i = 0, range = 0;
@@ -99,7 +103,23 @@ void readOrders(FILE *f_write_ptr, orderpointer orderHead){
   //printf("count : %d\n",range);
 
   // save data to linked list
-  for(i = 0; i<range ; i++){
+  for(i = 0; i<range ; i++){  //幾筆資料
+    // 宣告節點
+    orderpointer temp = malloc(sizeof(ordernode));
+    char* tempc = malloc(sizeof(char)*50);
+
+    // 節點初始化
+    temp -> order_ID = -1;
+    temp -> recipe_name = malloc(sizeof(char)*50);
+    temp -> recipe_name[0] = '\0';
+    temp -> arrival = -1;
+    temp -> deadline = -1;
+    temp -> money = -1;
+    temp -> punishment = -1;
+    temp -> pre = NULL;
+    temp -> next = NULL;
+
+
     int j;
     for (j = 0; j < 6; j++) {
       fscanf(f_write_ptr,"%[^ &&[^\n]]",context);
@@ -108,26 +128,47 @@ void readOrders(FILE *f_write_ptr, orderpointer orderHead){
       //change here
       switch (j) {
         case 0:
-          printf("order_ID : %s\n",context);
+          //printf("order_ID : %s\n",context);
+          //printf("value : %d\n",getValue(context));
+          temp -> order_ID = getValue(context);
           break;
         case 1:
-          printf("recipe_name : %s\n",context);
+          //printf("recipe_name : %s\n",context);
+          // temp -> recipe_name = context; 會出錯，因為是給位置
+          strcpy(tempc, context);
+          temp -> recipe_name = tempc;
           break;
         case 2:
-          printf("arrival : %s\n",context);
+          //printf("arrival : %s\n",context);
+          temp -> arrival = getValue(context);
           break;
         case 3:
-          printf("deadline : %s\n",context);
+          //printf("deadline : %s\n",context);
+          temp -> deadline = getValue(context);
           break;
         case 4:
-          printf("money : %s\n",context);
+          //printf("money : %s\n",context);
+          temp -> money = getValue(context);
           break;
         case 5:
-          printf("punishment : %s\n",context);
+          //printf("punishment : %s\n",context);
+          temp -> punishment = getValue(context);
           break;
       }
     }
+    // node insert to main linked list
+    if(!orderHead){
+      orderHead = temp;
+      pre = temp;
+    }else{
+      //printf("%p\t%p\t%p\t%p\n", temp->pre, temp, temp->next, pre);
+      temp->pre = pre;
+      pre->next = temp;
+      pre = temp;
+      //printf("%p\t%p\t%p\t%p\n", temp->pre, temp, temp->next, pre);
+    }
   }
+  return orderHead;
 }
 
 void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
@@ -207,6 +248,15 @@ void readRecipe(FILE *f_write_ptr, recipespointer recipeHead){
   }
 }
 
+
+int getValue(char *str){
+  int k, num = 0;
+  while(str[k]!='\0'){
+    num = num*10 + str[k]-'0';
+    k+=1;
+  }
+  return num;
+}
 
 
 // 排序到達的，先到的先做
