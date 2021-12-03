@@ -4,7 +4,7 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE "Test_case\\test_case_1-1\\input_1.txt"
+#define INPUTFILE  "Test_case\\test_case_1-1\\input_1.txt"
 #define OUTPUTFILE "output_1.txt"
 
 FILE *f_read_ptr;
@@ -30,15 +30,71 @@ int main(int argc, char const *argv[]) {
 		  fclose(f_read_ptr);
 		  exit(EXIT_FAILURE);
 		}
-	}else {
+	} /*else {
 		f_write_ptr = fopen(OUTPUTFILE,"w");
-	}
+	}*/ 
 	
 	char endLineBuf = ' ';
 	char contents[10000];
 	
 	
-	fscanf(f_read_ptr,"%[^\n]",contents); 
+	while(TRUE){
+		fscanf(f_read_ptr,"%[^\n]",contents); 
+		endLineBuf = fgetc(f_read_ptr);
+		int dataCount = -1;
+		int opCount = -1;
+		char charBuf = ' ';
+		
+		// get data count (M)
+		int tempNum = 0, readIndex = -1;
+		while (TRUE){
+		  readIndex += 1;
+		  charBuf = contents[readIndex];
+		  if(charBuf == ' ' ){
+		  	dataCount = tempNum;
+		    tempNum = 0;
+		    break;
+		  }else{
+		    tempNum = tempNum * 10 + (charBuf - '0');
+		  }
+		}
+		
+		
+		// get op count (N)
+		while (TRUE){
+		  readIndex += 1;
+		  charBuf = contents[readIndex];
+		  if(charBuf == '\0' || charBuf == '\r'){
+		    opCount = tempNum;
+		    tempNum = 0;
+		    readIndex = -1;
+		    break;
+		  }else{
+		    tempNum = tempNum * 10 + (charBuf - '0');
+		  }
+		}
+		
+		//printf("%d %d\n", dataCount, opCount);
+		
+		if( dataCount == 0 && opCount == 0){
+			break;
+		}else{
+			/* read data (M datas)*/
+			fscanf(f_read_ptr,"%[^\n]",contents); 
+			endLineBuf = fgetc(f_read_ptr);
+			printf("%s\n",contents);
+			
+			/* process opers */
+			int i;
+			for( i = 0 ; i < opCount ; i++){
+				fscanf(f_read_ptr,"%[^\n]",contents); 
+				endLineBuf = fgetc(f_read_ptr);
+				printf("%s\n",contents);
+			}
+		}
+		dataCount = -1;
+		opCount = -1;
+	}
 	
 	
 	fclose(f_read_ptr);

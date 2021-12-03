@@ -12,12 +12,12 @@ FILE *f_write_ptr;
 
 
 int main(int argc, char const *argv[]) {
-	
+
 	if (!(f_read_ptr = fopen(INPUTFILE,"r"))){
 		printf("Cannot open file : %s\n", INPUTFILE);
 		exit(EXIT_FAILURE);
 	}
-	
+
 	if((f_write_ptr = fopen(OUTPUTFILE,"r"))){
 		fclose(f_write_ptr);
 		printf("File %s have already exist.\nContinue to overwrite output file ? [Y/N] ",OUTPUTFILE);
@@ -33,18 +33,17 @@ int main(int argc, char const *argv[]) {
 	}else {
 		f_write_ptr = fopen(OUTPUTFILE,"w");
 	}
-	
+
 	char endLineBuf = ' ';
 	char contents[10000];
-	
-	
-	fscanf(f_read_ptr,"%[^\n]",contents); 
-	
-	
+
+
+	fscanf(f_read_ptr,"%[^\n]",contents);
+
+
+
 	fclose(f_read_ptr);
 	fclose(f_write_ptr);
 	printf("Complete !\n");
 	return 0;
 }
-
-
