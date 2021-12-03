@@ -33,7 +33,7 @@ void reverseGroupOfXItems(int);
 
 int main(int argc, char const *argv[]) {
   FILE *f_read_ptr;
-  const char *filename_input = "../testData/test_case_1-3/input_1.txt"; // 要注意 input file path
+  const char *filename_input = "testData\\test_case_1-3\\input_1.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){
@@ -61,7 +61,7 @@ int main(int argc, char const *argv[]) {
 
   // from input file read line
   char endLineBuf = ' ';
-  char contents[100];
+  char contents[1000];
 
   // 讀入 init list
   fscanf(f_read_ptr,"%[^\n]",contents);  //讀到換行前
