@@ -225,26 +225,123 @@ nodePointer deleteNode(nodePointer root, int data){
 
 // query node x, get deepth
 void queryNode(nodePointer root, int data){
-	// check node exist
-	if(1){
-		return;
-	}else{
-		// query node
+	if(root){
+		// check wether the node exist or not
+		nodePointer visitPointer = root;				// use for visit nodes
+		int deepth = 0;
+		while (visitPointer) {	// visit nodes untill to NULL
+			deepth += 1;
+			if(visitPointer->data != data){
+				if(data > visitPointer->data){
+					visitPointer = visitPointer->right;
+				}else{
+					visitPointer = visitPointer->left;
+				}
+			}else{								// node exist
+				//printf("deep : ");
+				printf("%d\n",deepth);
+				break;
+			}
+		}
 	}
 }
 
 
 // print form node x to y
 void printSum(nodePointer root, int pointA, int pointB){
-	// check node exist
-	if(1 && 1){
-		return;
+	
+	int maxNode, minNode;
+	if (pointA > pointB){
+		maxNode = pointA;
+		minNode = pointB;
 	}else{
-		// printSum
+		maxNode = pointB;
+		minNode = pointA;
+	}
+	
+	// check node exist
+	if(root){
+		if(maxNode > root->data && minNode < root->data){
+			root = root; 
+		}else if(minNode > root->data){
+			while(minNode > root->data){
+				root = root -> right;
+			}
+			//printf("root->data : %d\n",root->data);
+		}else{
+			while(maxNode < root->data){
+				root = root -> left;
+			}
+			//printf("root->data : %d\n",root->data);
+		}
+		
+		// check wether the node exist or not
+		nodePointer visitPointer = root;				// use for visit nodes
+		int total = 0, sumA = 0, isALegal = FALSE;
+		while (visitPointer) {	// visit nodes untill to NULL
+			if( visitPointer->data >= 0){
+				sumA = sumA + visitPointer->data;
+			}
+			if(visitPointer->data != minNode){
+				if(minNode > visitPointer->data){
+					visitPointer = visitPointer->right;
+				}else{
+					visitPointer = visitPointer->left;
+				}
+			}else{								// node exist
+				total = total + sumA;
+				isALegal = TRUE;
+				break;
+			}
+		}
+		//printf("sumA %d\n", sumA);
+		
+		int sumB = 0;
+		int isBLegal = FALSE;
+		visitPointer = root;
+		while (visitPointer) {	// visit nodes untill to NULL
+			if( visitPointer->data >= 0){
+				sumB = sumB + visitPointer->data;
+			}
+			if(visitPointer->data != maxNode){
+				if(maxNode > visitPointer->data){
+					visitPointer = visitPointer->right;
+				}else{
+					visitPointer = visitPointer->left;
+				}
+			}else{								// node exist
+				total = total + sumB;
+				isBLegal = TRUE;
+				break;
+			}
+		}
+		//printf("sumB %d\n", sumB);
+		
+		if(isALegal && isBLegal){
+			total = total - root->data;
+			//printf("total:");
+			printf("%d\n",total);
+		}
 	}
 }
 
-
+void decodeOP(nodePointer root, char *content){
+	int index = 0;
+	while(!isspace(content[index++]));
+	nodePointer unused;
+	
+	if(content[0] == 'I'){
+		unused = insertNode(root, stringToInt(&content[index]));
+	}else if(content[0] == 'D'){
+		unused = deleteNode(root, stringToInt(&content[index]));
+	}else if(content[0] == 'Q'){
+		queryNode(root, stringToInt(&content[index]));
+	}else if(content[0] == 'P'){
+		int index2 = index;
+		while(!isspace(content[index2++]));
+		printSum(root, stringToInt(&content[index]), stringToInt(&content[index2]));
+	}
+}
 
 
 int main(int argc, char const *argv[]) {
@@ -273,7 +370,7 @@ int main(int argc, char const *argv[]) {
 	char endLineBuf = ' ';
 	char contents[10000];
 	nodePointer treeRoot = NULL;
-
+	int totalTestCase = 0;
 
 	while(TRUE){
 		fscanf(f_read_ptr,"%[^\n]",contents);
@@ -311,7 +408,7 @@ int main(int argc, char const *argv[]) {
 		  }
 		}
 
-		printf("%d %d\n", dataCount, opCount);
+		//printf("%d %d\n", dataCount, opCount);
 
 		if( dataCount == 0 && opCount == 0){
 			break;
@@ -319,19 +416,18 @@ int main(int argc, char const *argv[]) {
 			/* read data (M datas)*/
 			fscanf(f_read_ptr,"%[^\n]",contents);
 			endLineBuf = fgetc(f_read_ptr);
-			printf("%s\n",contents);
+			//printf("%s\n",contents);
 			treeRoot = initTree(treeRoot, contents, dataCount);
-			print2D(treeRoot);		// print tree
+			//print2D(treeRoot);		// print tree
 			
-			treeRoot = deleteNode(treeRoot, 2);
-			print2D(treeRoot);		// print tree
-
+			printf("# %d\n",++totalTestCase);
 			/* process opers */
 			int i;
 			for( i = 0 ; i < opCount ; i++){
 				fscanf(f_read_ptr,"%[^\n]",contents);
 				endLineBuf = fgetc(f_read_ptr);
-				printf("%s\n",contents);
+				//printf("%s\n",contents);
+				decodeOP(treeRoot, contents);
 			}
 		}
 		dataCount = -1;
