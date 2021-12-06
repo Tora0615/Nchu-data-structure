@@ -132,20 +132,24 @@ nodePointer initTree(nodePointer root, char *contents, int dataCount){
 
 
 // del node x
-void deleteNode(nodePointer root, int data){
+nodePointer deleteNode(nodePointer root, int data){
 	
 	// root == NULL
 	if(!root){
 		return root;
 	}
 	
+	
 	// check wether the node exist or not
 	nodePointer deletePointer = root;				// use to save the position to delete node
+	nodePointer parent = NULL;
 	while (deletePointer) {					// visit nodes untill to NULL
 		if(deletePointer->data != data){
 			if(data > deletePointer->data){
+				parent = deletePointer;
 				deletePointer = deletePointer->right;
 			}else{
+				parent = deletePointer;
 				deletePointer = deletePointer->left;
 			}
 		}else{								// node exist
@@ -153,17 +157,71 @@ void deleteNode(nodePointer root, int data){
 		}
 	}
 
+	nodePointer target = NULL;
+	nodePointer targetParent = NULL;
+	int haveLeft = -1;
 	if(!deletePointer){				// node NOT exist 
 		return;
 	}else{				// del node
-		if(1){			// Leaf (next)
-
-		}else if(1){	//	if has left tree
-
-		}else{			//
-
+		if(!deletePointer->left  && !deletePointer->right){			// is Leaf (left = null & right = null)
+			if(deletePointer == root){				// is also root
+				free(deletePointer);
+				return NULL;
+			}else{									// not root
+				free(deletePointer);
+				parent->data = NULL;
+				return root;
+			}
+		}else if(deletePointer->left){				// if have left tree
+			haveLeft = TRUE;
+			if(deletePointer->left->right){			// 
+				target = deletePointer->left;
+				while(target->right){				// find max node in left tree
+					targetParent = target;
+					target = target->right;
+				}
+			}else{									// 
+				targetParent = deletePointer;
+				if (deletePointer->right){
+					target = deletePointer->right;
+				}else{
+					target = deletePointer->left;
+				}
+				printf("targetParent : %d\n",targetParent->data);
+				printf("target : %d\n",target->data);
+			}
+			
+		}else{			// DONT have left tree but have right tree
+			haveLeft = FALSE;
+			if(deletePointer->right->left){
+				target = deletePointer->right;
+				while(target->left){					// find min node in right tree
+					targetParent = target;
+					target = target->left;
+				}
+			}else{
+				targetParent = deletePointer;
+					if (deletePointer->left){
+					target = deletePointer->left;
+				}else{
+					target = deletePointer->right;
+				}
+				printf("targetParent : %d\n",targetParent->data);
+				printf("target : %d\n",target->data);
+			}
+			
 		}
 	}
+	
+	// swap max/min data to deletePoint, and del leaf
+	deletePointer->data = target->data;
+	if(haveLeft){
+		targetParent->right = NULL;
+	}else{
+		targetParent->left = NULL;
+	}
+	free(target);	
+	return root;
 }
 
 
@@ -265,7 +323,10 @@ int main(int argc, char const *argv[]) {
 			endLineBuf = fgetc(f_read_ptr);
 			printf("%s\n",contents);
 			treeRoot = initTree(treeRoot, contents, dataCount);
-			//print2D(treeRoot);		// print tree
+			print2D(treeRoot);		// print tree
+			
+			treeRoot = deleteNode(treeRoot, 2);
+			print2D(treeRoot);		// print tree
 
 			/* process opers */
 			int i;
