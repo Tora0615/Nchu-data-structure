@@ -160,9 +160,9 @@ nodePointer deleteNode(nodePointer root, int data){
 	nodePointer target = NULL;
 	nodePointer targetParent = NULL;
 	int haveLeft = -1;
-	if(!deletePointer){				// node NOT exist 
-		return;
-	}else{				// del node
+	if(!deletePointer){				// node NOT exist   
+		return root;
+	}else{		/*printf("data %d",deletePointer->data);*/		// del node
 		if(!deletePointer->left  && !deletePointer->right){			// is Leaf (left = null & right = null)
 			if(deletePointer == root){				// is also root
 				free(deletePointer);
@@ -172,56 +172,54 @@ nodePointer deleteNode(nodePointer root, int data){
 				parent->data = NULL;
 				return root;
 			}
-		}else if(deletePointer->left){				// if have left tree
-			haveLeft = TRUE;
-			if(deletePointer->left->right){			// 
-				target = deletePointer->left;
+		}else if(deletePointer->left){				// have left tree 
+			target = deletePointer->left;
+			
+//			printf("deletePointer : %p\n",deletePointer);
+//			printf("target : %p\n",target);
+//			printf("target->left : %p\n",target->left);
+//			printf("target->right : %p\n",target->right);
+			
+			if(!target->left && !target->right){	// 3 -> 2(L)
+				deletePointer->data = target->data;
+				deletePointer->left = NULL;
+				free(target);
+			}else if(!target->right){				// 3 -> 2(L) -> ....(L)
+				deletePointer->data = target->data;
+				deletePointer->left = target->left;
+				free(target);
+			}else{									// 4 -> 2(L) -> 1(L)3(R)
 				while(target->right){				// find max node in left tree
 					targetParent = target;
 					target = target->right;
 				}
-			}else{									// 
-				targetParent = deletePointer;
-				if (deletePointer->right){
-					target = deletePointer->right;
-				}else{
-					target = deletePointer->left;
-				}
-				printf("targetParent : %d\n",targetParent->data);
-				printf("target : %d\n",target->data);
+				deletePointer->data = target->data;	// swap the data of deletePointer & target
+				targetParent->right = NULL;
+				free(target);
 			}
-			
-		}else{			// DONT have left tree but have right tree
-			haveLeft = FALSE;
-			if(deletePointer->right->left){
-				target = deletePointer->right;
-				while(target->left){					// find min node in right tree
+			return root;
+		}else{										// only have right tree
+			target = deletePointer->right;
+			if(!target->right && !target->left){	// 3 -> 2(L)
+				deletePointer->data = target->data;
+				deletePointer->right = NULL;
+				free(target);
+			}else if(!target->left){				// 3 -> 2(L) -> ....(L)
+				deletePointer->data = target->data;
+				deletePointer->right = target->right;
+				free(target);
+			}else{									// 4 -> 2(L) -> 1(L)3(R)
+				while(target->left){				// find max node in left tree
 					targetParent = target;
 					target = target->left;
 				}
-			}else{
-				targetParent = deletePointer;
-					if (deletePointer->left){
-					target = deletePointer->left;
-				}else{
-					target = deletePointer->right;
-				}
-				printf("targetParent : %d\n",targetParent->data);
-				printf("target : %d\n",target->data);
+				deletePointer->data = target->data;	// swap the data of deletePointer & target
+				targetParent->left = NULL;
+				free(target);
 			}
-			
-		}
+			return root;
+		}	
 	}
-	
-	// swap max/min data to deletePoint, and del leaf
-	deletePointer->data = target->data;
-	if(haveLeft){
-		targetParent->right = NULL;
-	}else{
-		targetParent->left = NULL;
-	}
-	free(target);	
-	return root;
 }
 
 
