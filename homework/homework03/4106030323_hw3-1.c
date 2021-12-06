@@ -7,6 +7,8 @@
 #define INPUTFILE  "Test_case\\test_case_1-1\\input_1.txt"
 #define OUTPUTFILE "output_1.txt"
 
+#define COUNT 10   // print 2D
+
 FILE *f_read_ptr;
 FILE *f_write_ptr;
 
@@ -18,29 +20,140 @@ typedef struct _node{
 } node;
 
 
+void print2DUtil(nodePointer root, int space){
+    // Base case
+    if (root == NULL)
+        return;
+
+    // Increase distance between levels
+    space += COUNT;
+
+    // Process right child first
+    print2DUtil(root->right, space);
+
+    // Print current node after space
+    // count
+    printf("\n");
+    int i;
+    for (i = COUNT; i < space; i++)
+        printf(" ");
+    printf("%d\n", root->data);
+
+    // Process left child
+    print2DUtil(root->left, space);
+}
+
+// Wrapper over print2DUtil()
+void print2D(nodePointer root){
+   // Pass initial space count as 0
+   printf("--------------------------------------------------------------------------------------\n");
+   print2DUtil(root, 0);
+   printf("--------------------------------------------------------------------------------------\n");
+}
+
 // insert node x
-void insertNode(nodePointer root, int data){
+nodePointer insertNode(nodePointer root, int data){
 
 	nodePointer temp = (nodePointer)malloc(sizeof(node));
 	temp->data = data;
+	temp->left = NULL;
+	temp->right = NULL;
 
 	// root == NULL
 	if(!root){
+		return temp;
+	}
 
+	// check wether the node exist or not
+	nodePointer visitPointer = root;				// use for visit nodes
+	nodePointer insertPointer = NULL;				// use to save the position to insert node
+	while (visitPointer) {	// visit nodes untill to NULL
+		if(visitPointer->data != data){
+			if(data > visitPointer->data){
+				if(visitPointer->right == NULL){	// save insert position
+					insertPointer = visitPointer;
+				}
+				visitPointer = visitPointer->right;
+			}else{
+				if(visitPointer->left == NULL){		// save insert position
+					insertPointer = visitPointer;
+				}
+				visitPointer = visitPointer->left;
+			}
+		}else{								// node exist
+			return root;
+		}
 	}
-	// check node exist
-	if(1){
-		return;
+	
+	// node doesn't exist --> add node
+	if(data > insertPointer->data){
+		insertPointer->right = temp;
 	}else{
-		// add node
+		insertPointer->left = temp;
 	}
+	return root;
+}
+
+
+int stringToInt(char *contents){
+  	int index = 0, count = 0, isNegative = FALSE;
+  	while(*(contents + index) != '\0' && *(contents + index) != '\r' && *(contents + index) != ' '){
+	  	if(*(contents + index) == '-'){
+	  		isNegative = TRUE;
+		}else{
+			count = count*10 + (*(contents + index) - '0');
+		}
+	    index += 1;
+	}
+	if(isNegative){
+		count = count* (-1);
+	}
+	//printf("count %d\n",count);
+	return count;
+}
+
+
+nodePointer initTree(nodePointer root, char *contents, int dataCount){
+	int i;
+	for(i=0 ; i<dataCount-1 ; i++){
+		//printf("root addr : %p\n",root);
+		int temp = stringToInt(contents);
+		root = insertNode(root, temp);
+
+		int startIndex = 0;
+		while (!isspace(contents[startIndex++]));  // get the index after space
+		contents = &contents[startIndex];
+	}
+	int temp = stringToInt(contents);
+	root = insertNode(root, temp);
+
+	return root;
 }
 
 
 // del node x
 void deleteNode(nodePointer root, int data){
+	
+	// root == NULL
+	if(!root){
+		return root;
+	}
+	
+	// check wether the node exist or not
+	nodePointer deletePointer = root;				// use to save the position to delete node
+	while (deletePointer) {					// visit nodes untill to NULL
+		if(deletePointer->data != data){
+			if(data > deletePointer->data){
+				deletePointer = deletePointer->right;
+			}else{
+				deletePointer = deletePointer->left;
+			}
+		}else{								// node exist
+			break;
+		}
+	}
 
-	if(1){				// check node exist
+	if(!deletePointer){				// node NOT exist 
 		return;
 	}else{				// del node
 		if(1){			// Leaf (next)
@@ -103,6 +216,7 @@ int main(int argc, char const *argv[]) {
 
 	char endLineBuf = ' ';
 	char contents[10000];
+	nodePointer treeRoot = NULL;
 
 
 	while(TRUE){
@@ -141,7 +255,7 @@ int main(int argc, char const *argv[]) {
 		  }
 		}
 
-		//printf("%d %d\n", dataCount, opCount);
+		printf("%d %d\n", dataCount, opCount);
 
 		if( dataCount == 0 && opCount == 0){
 			break;
@@ -150,6 +264,8 @@ int main(int argc, char const *argv[]) {
 			fscanf(f_read_ptr,"%[^\n]",contents);
 			endLineBuf = fgetc(f_read_ptr);
 			printf("%s\n",contents);
+			treeRoot = initTree(treeRoot, contents, dataCount);
+			//print2D(treeRoot);		// print tree
 
 			/* process opers */
 			int i;
@@ -161,6 +277,7 @@ int main(int argc, char const *argv[]) {
 		}
 		dataCount = -1;
 		opCount = -1;
+		treeRoot = NULL;
 	}
 
 
