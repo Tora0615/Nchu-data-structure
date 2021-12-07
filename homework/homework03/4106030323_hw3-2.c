@@ -9,8 +9,8 @@
 
 FILE *f_read_ptr;
 FILE *f_write_ptr;
-char *dict = " !,-.:;?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";  
-int dictLen = 70;
+//char *dict = " !,-.:;?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";  
+int asciiLen = 128;
 
 
 int stringToInt(char *contents){
@@ -27,6 +27,42 @@ int stringToInt(char *contents){
 		count = count* (-1);
 	}
 	return count;
+}
+
+
+
+
+
+
+
+
+int getStringCost(char *contents){
+	int cost = 0, index = 0;
+	
+	int elementRecord[asciiLen], i;		// creat an array have 128 element
+	for(i=0;i<asciiLen;i++){			// init with zero
+		elementRecord[i] = 0;
+	}
+	
+	// count char frequency
+	while(contents[index] != '\0' && contents[index] != '\r'){
+		int asciiCode = contents[index];
+		elementRecord[asciiCode] += 1;
+		index++;
+	}
+	
+	//dump element count
+//	int temp=0;
+//	while(temp<128){
+//		if(elementRecord[temp]){
+//			printf("%c %d\n",temp,elementRecord[temp]);	
+//		}
+//		temp+=1;
+//	}
+
+	
+	
+	return cost;
 }
 
 int main(int argc, char const *argv[]) {
@@ -60,20 +96,18 @@ int main(int argc, char const *argv[]) {
 		endLineBuf = fgetc(f_read_ptr);
 		int dataCount = stringToInt(contents);
 		if(dataCount){				// bigger than 0
-			int i;
+			int i, cost = 0;
 			for(i=0;i<dataCount;i++){
 				fscanf(f_read_ptr,"%[^\n]",contents); 
 				endLineBuf = fgetc(f_read_ptr);
-				printf("%s\n",contents);
-				
+				//printf("%s\n",contents);
+				cost = cost + getStringCost(contents);
 			}
+			printf("%d\n\n",cost);
 		}else{
 			break;
 		}
 	}
-	
-	
-	
 	
 	fclose(f_read_ptr);
 	fclose(f_write_ptr);
