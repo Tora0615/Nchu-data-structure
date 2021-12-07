@@ -9,7 +9,25 @@
 
 FILE *f_read_ptr;
 FILE *f_write_ptr;
+char *dict = " !,-.:;?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";  
+int dictLen = 70;
 
+
+int stringToInt(char *contents){
+  	int index = 0, count = 0, isNegative = FALSE;
+  	while(*(contents + index) != '\0' && *(contents + index) != '\r' && *(contents + index) != ' '){
+	  	if(*(contents + index) == '-'){
+	  		isNegative = TRUE;
+		}else{
+			count = count*10 + (*(contents + index) - '0');
+		}
+	    index += 1;
+	}
+	if(isNegative){
+		count = count* (-1);
+	}
+	return count;
+}
 
 int main(int argc, char const *argv[]) {
 	
@@ -30,15 +48,31 @@ int main(int argc, char const *argv[]) {
 		  fclose(f_read_ptr);
 		  exit(EXIT_FAILURE);
 		}
-	}else {
+	}/** else {
 		f_write_ptr = fopen(OUTPUTFILE,"w");
-	}
+	}**/
 	
 	char endLineBuf = ' ';
 	char contents[10000];
 	
+	while(TRUE){
+		fscanf(f_read_ptr,"%[^\n]",contents); 
+		endLineBuf = fgetc(f_read_ptr);
+		int dataCount = stringToInt(contents);
+		if(dataCount){				// bigger than 0
+			int i;
+			for(i=0;i<dataCount;i++){
+				fscanf(f_read_ptr,"%[^\n]",contents); 
+				endLineBuf = fgetc(f_read_ptr);
+				printf("%s\n",contents);
+				
+			}
+		}else{
+			break;
+		}
+	}
 	
-	fscanf(f_read_ptr,"%[^\n]",contents); 
+	
 	
 	
 	fclose(f_read_ptr);
