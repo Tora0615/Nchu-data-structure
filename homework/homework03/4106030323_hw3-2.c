@@ -37,7 +37,7 @@ int stringToInt(char *contents){
 
 void dumpLinkedList(nodePointer head){
 	while(head){
-		printf("frequency : %d, cost : %d, addr : %p\n", head->frequency, head->cost, head);
+		printf("frequency : %d, cost : %d, addr : %p, next : %p\n", head->frequency, head->cost, head, head->next);
 		head = head->next;
 	}
 	printf("\n");
@@ -69,7 +69,7 @@ nodePointer initLinkedList(int *elementRecord){
 			elementCount+=1;
 		}
 	}
-	printf("element count : %d\n", elementCount);
+	//printf("element count : %d\n", elementCount);
 	
 	// save elements to node linked list
 	nodePointer head = NULL;
@@ -102,103 +102,91 @@ nodePointer initLinkedList(int *elementRecord){
 		}
 	}
 	
-	dumpLinkedList(head);
+	//dumpLinkedList(head);
 	return head;
 }
 
 
-int getStringCost(char *contents){
-	
-
-
-int cost = 0;
-
-
-
-
-
-
-
-
-
-
-
-
-
-//	int frequency = 1;
-//	nodePointer pointStack = NULL, pointTemp = NULL;
-//	while(head->next){
-//		
-// 		nodePointer temphead = head;
-//		nodePointer pre = NULL;
-//		while(temphead->next){
-//			dumpLinkedList(head);
-//			printf("temphead : %p, pre : %p\n",temphead, pre);
-//			// not equal -> chenk next
-//			if(temphead->frequency != frequency){
-//				pre = temphead;
-//				//temphead = temphead->next;
-//			}else{		// equal -> del node
-//				if(temphead == head){
-//					head = head->next;
-//					
-//					if(!pointStack){				// pointStack is empty
-//						pointStack = temphead;		// move to stack
-//					}else{
-//						pointTemp = pointStack;		// stack element move to temp
-//						pointStack = NULL;			// stack set to empty
-//						
-//						// add value
-//						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
-//						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
-//						pointTemp->next = NULL;
-//						
-//						// add to tail
-//						nodePointer tail = head;
-//						while(tail->next){
-//							tail = tail -> next;
-//						}
-//						tail->next = pointTemp;
-//						
-//						// set to 0
-//						pointTemp = NULL;
-//						//free(temphead);
-//					}
-//				}else{
-//					pre->next = temphead->next;
-//					if(!pointStack){				// pointStack is empty
-//						pointStack = temphead;		// move to stack
-//					}else{
-//						pointTemp = pointStack;		// stack element move to temp
-//						pointStack = NULL;			// stack set to empty
-//						
-//						// add value
-//						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
-//						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
-//						pointTemp->next = NULL;
-//						
-//						// add to tail
-//						nodePointer tail = head;
-//						while(tail->next){
-//							tail = tail -> next;
-//						}
-//						tail->next = pointTemp;
-//						
-//						// set to 0
-//						pointTemp = NULL;
-//						//free(temphead);
-//					}
-//				}
-//				//elementCount -= 1;
-//				pre = NULL;
-//			}
-//			
-//			temphead = temphead->next;
-//		}
-//		frequency += 1;	
-//	}
-	
-	return cost;
+int getCost(nodePointer head){
+	while(head->next){		// node > 1
+		//dumpLinkedList(head);
+		int tempFrequency;
+		nodePointer nodeA = NULL, nodeB = NULL, preA = NULL, preB = NULL;
+		nodePointer tempHead;
+		
+		// get node A
+		tempFrequency = 1;
+		while(!nodeA){
+			tempHead = head;
+			while(tempHead){
+				if(tempHead->frequency == tempFrequency){
+					nodeA = tempHead;
+					break;
+				}
+				preA = tempHead;
+				tempHead = tempHead->next;
+			}
+			tempFrequency += 1;
+		}
+		
+		// get node B
+		tempFrequency = 1;
+		while(!nodeB){
+			tempHead = head;
+			while(tempHead){
+				if(tempHead->frequency == tempFrequency && tempHead != nodeA){		// 重要 
+					nodeB = tempHead;
+					break;
+				}
+				preB = tempHead;
+				tempHead = tempHead->next;
+			}
+			tempFrequency += 1;
+		}
+		
+		//printf("AFreq : %d -- %p, BFreq : %d -- %p\n", nodeA->frequency, nodeA, nodeB->frequency, nodeB);
+		//printf("preA : %p, preB : %p\n", preA, preB);
+		
+		// creat new node and save data
+		nodePointer temp = (nodePointer)malloc(sizeof(node));
+		temp->cost = nodeA->cost + nodeB->cost + nodeA->frequency + nodeB->frequency;
+		temp->frequency = nodeA->frequency + nodeB->frequency;
+		temp->next = NULL;
+		
+				
+		// add one node to tail
+		tempHead = head;
+		while(tempHead->next){
+			tempHead = tempHead->next;
+		}
+		tempHead->next = temp;
+		
+		// del two node
+		if(nodeA == head){
+			temp = head;
+			head = head->next;
+			free(temp);
+		}else{
+			temp = nodeA;
+			preA->next = nodeA->next;
+			free(temp);
+		}
+		
+		if(nodeB == head){
+			temp = head;
+			head = head->next;
+			free(temp);
+		}else{
+			temp = nodeB;
+			if(preB == nodeA){		// to prove not delete in serial (連續刪除會出錯) 
+				preB = preA;
+			}
+			preB->next = nodeB->next;
+			free(temp);
+		}
+	}
+	//dumpLinkedList(head);
+	return head->cost;
 }
 
 int main(int argc, char const *argv[]) {
@@ -243,11 +231,13 @@ int main(int argc, char const *argv[]) {
 			for(i=0;i<dataCount;i++){
 				fscanf(f_read_ptr,"%[^\n]",contents); 
 				endLineBuf = fgetc(f_read_ptr);
-				//printf("%s\n",contents);
 				countFrequency(elementRecord, contents);
 			}
+			
 			//dumpElementRecord(elementRecord);
 			nodePointer head = initLinkedList(elementRecord);
+			cost = getCost(head);
+			
 			printf("%d\n\n",cost);
 		}else{
 			break;
