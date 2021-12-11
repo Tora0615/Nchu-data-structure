@@ -43,33 +43,27 @@ void dumpLinkedList(nodePointer head){
 	printf("\n");
 }
 
-
-int getStringCost(char *contents){
-	int cost = 0, index = 0;
-	
-	int elementRecord[asciiLen], i;		// creat an array have 128 element
+void dumpElementRecord(int *elementRecord){
+	int i;
 	for(i=0;i<asciiLen;i++){			// init with zero
-		elementRecord[i] = 0;
+		printf("%c : %d\n",i, elementRecord[i]);
 	}
-	
+}
+
+void countFrequency(int *elementRecord, char *contents){
+	int index = 0;
 	// count char frequency
 	while(contents[index] != '\0' && contents[index] != '\r'){
 		int asciiCode = contents[index];
 		elementRecord[asciiCode] += 1;
 		index++;
 	}
-	
-	//dump element count
-//	int temp=0;
-//	while(temp<128){
-//		if(elementRecord[temp]){
-//			printf("%c %d\n",temp,elementRecord[temp]);	
-//		}
-//		temp+=1;
-//	}
+}
 
+nodePointer initLinkedList(int *elementRecord){
+	
 	// count non-zero element 
-	int elementCount = 0;
+	int elementCount = 0, i;
 	for(i=0;i<asciiLen;i++){			
 		if(elementRecord[i]>0){
 			elementCount+=1;
@@ -108,83 +102,103 @@ int getStringCost(char *contents){
 		}
 	}
 	
-	//dumpLinkedList(head);
-	//return 0;
+	dumpLinkedList(head);
+	return head;
+}
 
-	int frequency = 1;
-	nodePointer pointStack = NULL, pointTemp = NULL;
-	while(head->next){
-		
- 		nodePointer temphead = head;
-		nodePointer pre = NULL;
-		while(temphead->next){
-			dumpLinkedList(head);
-			printf("temphead : %p, pre : %p\n",temphead, pre);
-			// not equal -> chenk next
-			if(temphead->frequency != frequency){
-				pre = temphead;
-				//temphead = temphead->next;
-			}else{		// equal -> del node
-				if(temphead == head){
-					head = head->next;
-					
-					if(!pointStack){				// pointStack is empty
-						pointStack = temphead;		// move to stack
-					}else{
-						pointTemp = pointStack;		// stack element move to temp
-						pointStack = NULL;			// stack set to empty
-						
-						// add value
-						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
-						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
-						pointTemp->next = NULL;
-						
-						// add to tail
-						nodePointer tail = head;
-						while(tail->next){
-							tail = tail -> next;
-						}
-						tail->next = pointTemp;
-						
-						// set to 0
-						pointTemp = NULL;
-						//free(temphead);
-					}
-				}else{
-					pre->next = temphead->next;
-					if(!pointStack){				// pointStack is empty
-						pointStack = temphead;		// move to stack
-					}else{
-						pointTemp = pointStack;		// stack element move to temp
-						pointStack = NULL;			// stack set to empty
-						
-						// add value
-						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
-						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
-						pointTemp->next = NULL;
-						
-						// add to tail
-						nodePointer tail = head;
-						while(tail->next){
-							tail = tail -> next;
-						}
-						tail->next = pointTemp;
-						
-						// set to 0
-						pointTemp = NULL;
-						//free(temphead);
-					}
-				}
-				//elementCount -= 1;
-				pre = NULL;
-			}
-			
-			temphead = temphead->next;
-		}
-		frequency += 1;	
-	}
+
+int getStringCost(char *contents){
 	
-	return head->cost;
+
+
+int cost = 0;
+
+
+
+
+
+
+
+
+
+
+
+
+
+//	int frequency = 1;
+//	nodePointer pointStack = NULL, pointTemp = NULL;
+//	while(head->next){
+//		
+// 		nodePointer temphead = head;
+//		nodePointer pre = NULL;
+//		while(temphead->next){
+//			dumpLinkedList(head);
+//			printf("temphead : %p, pre : %p\n",temphead, pre);
+//			// not equal -> chenk next
+//			if(temphead->frequency != frequency){
+//				pre = temphead;
+//				//temphead = temphead->next;
+//			}else{		// equal -> del node
+//				if(temphead == head){
+//					head = head->next;
+//					
+//					if(!pointStack){				// pointStack is empty
+//						pointStack = temphead;		// move to stack
+//					}else{
+//						pointTemp = pointStack;		// stack element move to temp
+//						pointStack = NULL;			// stack set to empty
+//						
+//						// add value
+//						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
+//						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
+//						pointTemp->next = NULL;
+//						
+//						// add to tail
+//						nodePointer tail = head;
+//						while(tail->next){
+//							tail = tail -> next;
+//						}
+//						tail->next = pointTemp;
+//						
+//						// set to 0
+//						pointTemp = NULL;
+//						//free(temphead);
+//					}
+//				}else{
+//					pre->next = temphead->next;
+//					if(!pointStack){				// pointStack is empty
+//						pointStack = temphead;		// move to stack
+//					}else{
+//						pointTemp = pointStack;		// stack element move to temp
+//						pointStack = NULL;			// stack set to empty
+//						
+//						// add value
+//						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
+//						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
+//						pointTemp->next = NULL;
+//						
+//						// add to tail
+//						nodePointer tail = head;
+//						while(tail->next){
+//							tail = tail -> next;
+//						}
+//						tail->next = pointTemp;
+//						
+//						// set to 0
+//						pointTemp = NULL;
+//						//free(temphead);
+//					}
+//				}
+//				//elementCount -= 1;
+//				pre = NULL;
+//			}
+//			
+//			temphead = temphead->next;
+//		}
+//		frequency += 1;	
+//	}
+	
+	return cost;
 }
 
 int main(int argc, char const *argv[]) {
@@ -219,12 +233,21 @@ int main(int argc, char const *argv[]) {
 		int dataCount = stringToInt(contents);
 		if(dataCount){				// bigger than 0
 			int i, cost = 0;
+			
+			
+			int elementRecord[asciiLen];		// creat an array have 128 element
+			for(i=0;i<asciiLen;i++){			// init with zero
+				elementRecord[i] = 0;
+			}
+			
 			for(i=0;i<dataCount;i++){
 				fscanf(f_read_ptr,"%[^\n]",contents); 
 				endLineBuf = fgetc(f_read_ptr);
 				//printf("%s\n",contents);
-				cost = cost + getStringCost(contents);
+				countFrequency(elementRecord, contents);
 			}
+			//dumpElementRecord(elementRecord);
+			nodePointer head = initLinkedList(elementRecord);
 			printf("%d\n\n",cost);
 		}else{
 			break;
