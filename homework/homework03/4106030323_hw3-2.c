@@ -12,6 +12,12 @@ FILE *f_write_ptr;
 //char *dict = " !,-.:;?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";  
 int asciiLen = 128;
 
+typedef struct _node *nodePointer;
+typedef struct _node {
+	int frequency;
+	int cost;
+	nodePointer next;
+}node;
 
 int stringToInt(char *contents){
   	int index = 0, count = 0, isNegative = FALSE;
@@ -29,11 +35,13 @@ int stringToInt(char *contents){
 	return count;
 }
 
-
-
-
-
-
+void dumpLinkedList(nodePointer head){
+	while(head){
+		printf("frequency : %d, cost : %d, addr : %p\n", head->frequency, head->cost, head);
+		head = head->next;
+	}
+	printf("\n");
+}
 
 
 int getStringCost(char *contents){
@@ -60,9 +68,123 @@ int getStringCost(char *contents){
 //		temp+=1;
 //	}
 
+	// count non-zero element 
+	int elementCount = 0;
+	for(i=0;i<asciiLen;i++){			
+		if(elementRecord[i]>0){
+			elementCount+=1;
+		}
+	}
+	printf("element count : %d\n", elementCount);
 	
+	// save elements to node linked list
+	nodePointer head = NULL;
+	int j = -1;
+	for(i=0;i<elementCount;i++){
+		
+		// find the non-zero data's index in elementRecord
+		while(j<asciiLen){
+			j+=1;
+			if(elementRecord[j]>0){
+				break;
+			}
+		}
+		
+		// setup node
+		nodePointer temp = (nodePointer)malloc(sizeof(node));
+		temp->frequency = elementRecord[j];
+		temp->cost = 0;
+		temp->next = NULL;
+		
+		// link
+		if(!head){		// head is NULL
+			head = temp;
+		}else{
+			nodePointer temphead = head;
+			while(temphead->next){
+				temphead = temphead->next;
+			}
+			temphead->next = temp;
+		}
+	}
 	
-	return cost;
+	//dumpLinkedList(head);
+	//return 0;
+
+	int frequency = 1;
+	nodePointer pointStack = NULL, pointTemp = NULL;
+	while(head->next){
+		
+ 		nodePointer temphead = head;
+		nodePointer pre = NULL;
+		while(temphead->next){
+			dumpLinkedList(head);
+			printf("temphead : %p, pre : %p\n",temphead, pre);
+			// not equal -> chenk next
+			if(temphead->frequency != frequency){
+				pre = temphead;
+				//temphead = temphead->next;
+			}else{		// equal -> del node
+				if(temphead == head){
+					head = head->next;
+					
+					if(!pointStack){				// pointStack is empty
+						pointStack = temphead;		// move to stack
+					}else{
+						pointTemp = pointStack;		// stack element move to temp
+						pointStack = NULL;			// stack set to empty
+						
+						// add value
+						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
+						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
+						pointTemp->next = NULL;
+						
+						// add to tail
+						nodePointer tail = head;
+						while(tail->next){
+							tail = tail -> next;
+						}
+						tail->next = pointTemp;
+						
+						// set to 0
+						pointTemp = NULL;
+						//free(temphead);
+					}
+				}else{
+					pre->next = temphead->next;
+					if(!pointStack){				// pointStack is empty
+						pointStack = temphead;		// move to stack
+					}else{
+						pointTemp = pointStack;		// stack element move to temp
+						pointStack = NULL;			// stack set to empty
+						
+						// add value
+						pointTemp->cost = pointTemp->cost + temphead->cost + pointTemp->frequency + temphead->frequency;
+						pointTemp->frequency = pointTemp->frequency + temphead->frequency;
+						pointTemp->next = NULL;
+						
+						// add to tail
+						nodePointer tail = head;
+						while(tail->next){
+							tail = tail -> next;
+						}
+						tail->next = pointTemp;
+						
+						// set to 0
+						pointTemp = NULL;
+						//free(temphead);
+					}
+				}
+				//elementCount -= 1;
+				pre = NULL;
+			}
+			
+			temphead = temphead->next;
+		}
+		frequency += 1;	
+	}
+	
+	return head->cost;
 }
 
 int main(int argc, char const *argv[]) {
