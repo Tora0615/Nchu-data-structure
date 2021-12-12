@@ -9,7 +9,6 @@
 
 FILE *f_read_ptr;
 FILE *f_write_ptr;
-//char *dict = " !,-.:;?0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";  
 int asciiLen = 128;
 
 typedef struct _node *nodePointer;
@@ -134,7 +133,7 @@ int getCost(nodePointer head){
 		while(!nodeB){
 			tempHead = head;
 			while(tempHead){
-				if(tempHead->frequency == tempFrequency && tempHead != nodeA){		// 重要 
+				if(tempHead->frequency == tempFrequency && tempHead != nodeA){		// To get different node form nodeA
 					nodeB = tempHead;
 					break;
 				}
@@ -162,26 +161,26 @@ int getCost(nodePointer head){
 		tempHead->next = temp;
 		
 		// del two node
-		if(nodeA == head){
+		if(nodeA == head){			// delete head
 			temp = head;
 			head = head->next;
 			free(temp);
-		}else{
+		}else{						// delete body
 			temp = nodeA;
 			preA->next = nodeA->next;
 			free(temp);
 		}
 		
-		if(nodeB == head){
+		if(nodeB == head){			// delete head
 			temp = head;
 			head = head->next;
 			free(temp);
-		}else{
+		}else{						// delete body
 			temp = nodeB;
-			if(preB == nodeA){		// to prove not delete in serial (連續刪除會出錯) 
-				preB = preA;
-			}
-			preB->next = nodeB->next;
+			if(preB == nodeA){		// to prove not delete in serial (Continuous deletion will cause errors) 
+				preB = preA;		// example : 	3		3		1		1		4		4 
+			}						// 				 				A 		B
+			preB->next = nodeB->next;	//        		  preA	   preB
 			free(temp);
 		}
 	}
