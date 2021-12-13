@@ -4,7 +4,7 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE "Test_case\\test_case_2-1\\input_2.txt"
+#define INPUTFILE "Test_case\\test_case_2-2\\input_2.txt"
 #define OUTPUTFILE "output_2.txt"
 
 FILE *f_read_ptr;
@@ -207,9 +207,9 @@ int main(int argc, char const *argv[]) {
 		  fclose(f_read_ptr);
 		  exit(EXIT_FAILURE);
 		}
-	}/** else {
+	} else {
 		f_write_ptr = fopen(OUTPUTFILE,"w");
-	}**/
+	}
 	
 	char endLineBuf = ' ';
 	char contents[10000];
@@ -237,7 +237,8 @@ int main(int argc, char const *argv[]) {
 			nodePointer head = initLinkedList(elementRecord);
 			cost = getCost(head);
 			
-			printf("%d\n\n",cost);
+			//printf("%d\n\n",cost);
+			fprintf(f_write_ptr,"%d\n\n",cost);
 		}else{
 			break;
 		}
