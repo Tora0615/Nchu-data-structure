@@ -4,6 +4,7 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
+//#define INPUTFILE "Test_case\\test_case_1-3\\input_1.txt"
 #define INPUTFILE  "../Test_case/test_case_1-3/input_1.txt"
 #define OUTPUTFILE "output_1.txt"
 #define DEBUG 0
