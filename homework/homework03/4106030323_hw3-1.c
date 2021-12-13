@@ -4,8 +4,10 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE  "../Test_case/test_case_1-2/input_1.txt"
+#define INPUTFILE  "../Test_case/test_case_1-3/input_1.txt"
 #define OUTPUTFILE "output_1.txt"
+#define DEBUG 0
+
 
 
 #define COUNT 10   // print 2D
@@ -275,9 +277,9 @@ void queryNode(nodePointer root, int data){
 				}
 			}else{								// node exist
 				//printf("deep : ");
-				printf("node(%d) deep : %d\n",data, deepth);
+				DEBUG ? printf("node(%d) deep : %d\n",data, deepth) : fprintf(f_write_ptr,"%d\n",deepth);
 				//printf("%d\n",deepth);
-				fprintf(f_write_ptr,"%d\n",deepth);
+
 				break;
 			}
 		}
@@ -375,8 +377,8 @@ void printSum(nodePointer root, int pointA, int pointB){
 				}
 				//printf("total:");
 				//printf("%d\n",total);
-				fprintf(f_write_ptr,"%d\n",total);
-				printf("A(%d) to B(%d) sum : %d\n",pointA,pointB,total);
+
+				DEBUG ? printf("A(%d) to B(%d) sum : %d\n",pointA,pointB,total) : fprintf(f_write_ptr,"%d\n",total);
 			}
 		}
 	}
@@ -425,7 +427,7 @@ int main(int argc, char const *argv[]) {
 	}
 
 	char endLineBuf = ' ';
-	char contents[10000];
+	char *contents = (char*)malloc(sizeof(char)*5000000);
 	nodePointer treeRoot = NULL;
 	int totalTestCase = 0;
 
@@ -478,8 +480,7 @@ int main(int argc, char const *argv[]) {
 			//printf("%s\n",contents);
 			//print2D(treeRoot);		// print tree
 
-			printf("# %d\n",++totalTestCase);
-			fprintf(f_write_ptr,"# %d\n",++totalTestCase);
+			DEBUG ? printf("# %d\n",++totalTestCase) : fprintf(f_write_ptr,"# %d\n",++totalTestCase);
 
 			/* process opers */
 			int i;
@@ -498,6 +499,7 @@ int main(int argc, char const *argv[]) {
 
 	fclose(f_read_ptr);
 	fclose(f_write_ptr);
+	free(contents);
 	printf("Complete !\n");
 	return 0;
 }
