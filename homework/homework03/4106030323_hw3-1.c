@@ -4,7 +4,7 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE  "Test_case\\test_case_1-2\\input_1.txt"
+#define INPUTFILE  "../Test_case/test_case_1-2/input_1.txt"
 #define OUTPUTFILE "output_1.txt"
 
 
@@ -85,7 +85,7 @@ nodePointer insertNode(nodePointer root, int data){
 			return root;
 		}
 	}
-	
+
 	// node doesn't exist --> add node
 	if(data > insertPointer->data){
 		insertPointer->right = temp;
@@ -134,13 +134,13 @@ nodePointer initTree(nodePointer root, char *contents, int dataCount){
 
 // del node x
 nodePointer deleteNode(nodePointer root, int data){
-	
+
 	// root == NULL
 	if(!root){
 		return root;
 	}
-	
-	
+
+
 	// check wether the node exist or not
 	nodePointer deletePointer = root;				// use to save the position to delete node
 	nodePointer parent = NULL;
@@ -161,7 +161,7 @@ nodePointer deleteNode(nodePointer root, int data){
 	nodePointer target = NULL;
 	nodePointer targetParent = NULL;
 	int haveLeft = -1;
-	if(!deletePointer){				// node NOT exist   
+	if(!deletePointer){				// node NOT exist
 		return root;
 	}else{		/*printf("data %d",deletePointer->data);*/		// del node
 		if(!deletePointer->left  && !deletePointer->right){			// is Leaf (left = null & right = null)
@@ -169,7 +169,7 @@ nodePointer deleteNode(nodePointer root, int data){
 				free(deletePointer);
 				return NULL;
 			}else{									// not root
-				if(parent->left){					// left leaf
+				if(parent->left == deletePointer){					// left leaf
 					parent->left = NULL;
 				}else{								// right leaf
 					parent->right = NULL;
@@ -177,14 +177,14 @@ nodePointer deleteNode(nodePointer root, int data){
 				free(deletePointer);
 				return root;
 			}
-		}else if(deletePointer->left){				// have left tree 
+		}else if(deletePointer->left){				// have left tree
 			target = deletePointer->left;
-			
+
 //			printf("deletePointer : %p\n",deletePointer);
 //			printf("target : %p\n",target);
 //			printf("target->left : %p\n",target->left);
 //			printf("target->right : %p\n",target->right);
-			
+
 			if(!target->left && !target->right){	// 3 -> 2(L)
 				deletePointer->data = target->data;
 				deletePointer->left = NULL;
@@ -223,7 +223,7 @@ nodePointer deleteNode(nodePointer root, int data){
 				free(target);
 			}
 			return root;
-		}	
+		}
 	}
 }
 
@@ -254,7 +254,7 @@ void queryNode(nodePointer root, int data){
 
 // print form node x to y
 void printSum(nodePointer root, int pointA, int pointB){
-	
+
 	int maxNode, minNode;
 	if (pointA > pointB){
 		maxNode = pointA;
@@ -263,23 +263,27 @@ void printSum(nodePointer root, int pointA, int pointB){
 		maxNode = pointB;
 		minNode = pointA;
 	}
-	
+
 	// check node exist
 	if(root){
 		if(maxNode > root->data && minNode < root->data){
-			root = root; 
-		}else if(minNode > root->data){
-			while(minNode > root->data){
-				root = root -> right;
-			}
-			//printf("root->data : %d\n",root->data);
+			root = root;
 		}else{
-			while(maxNode < root->data){
-				root = root -> left;
+			nodePointer visitPointer = root;				// use for visit nodes
+			while (visitPointer) {	// visit nodes untill to NULL
+				if(!(visitPointer->data > minNode) && !(visitPointer->data < maxNode)){
+					if(visitPointer->data < minNode){
+						visitPointer = visitPointer->right;
+					}else{
+						visitPointer = visitPointer->left;
+					}
+				}else{								// node exist
+					root = visitPointer;
+					break;
+				}
 			}
-			//printf("root->data : %d\n",root->data);
 		}
-		
+
 		// check wether the node exist or not
 		nodePointer visitPointer = root;				// use for visit nodes
 		int total = 0, sumA = 0, isALegal = FALSE;
@@ -300,7 +304,7 @@ void printSum(nodePointer root, int pointA, int pointB){
 			}
 		}
 		//printf("sumA %d\n", sumA);
-		
+
 		int sumB = 0;
 		int isBLegal = FALSE;
 		visitPointer = root;
@@ -321,9 +325,13 @@ void printSum(nodePointer root, int pointA, int pointB){
 			}
 		}
 		//printf("sumB %d\n", sumB);
-		
+
 		if(isALegal && isBLegal){
-			total = total - root->data;
+			if (root->data > 0){
+				total = total - root->data;
+			}else{
+				total = total;
+			}
 			//printf("total:");
 			//printf("%d\n",total);
 			printf("A(%d) to B(%d) sum : %d\n",pointA,pointB,total);
@@ -335,7 +343,7 @@ void decodeOP(nodePointer root, char *content){
 	int index = 0;
 	while(!isspace(content[index++]));
 	nodePointer unused;
-	
+
 	if(content[0] == 'I'){
 		unused = insertNode(root, stringToInt(&content[index]));
 	}else if(content[0] == 'D'){
@@ -425,7 +433,7 @@ int main(int argc, char const *argv[]) {
 			//printf("%s\n",contents);
 			treeRoot = initTree(treeRoot, contents, dataCount);
 			//print2D(treeRoot);		// print tree
-			
+
 			printf("# %d\n",++totalTestCase);
 			/* process opers */
 			int i;
