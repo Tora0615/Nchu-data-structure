@@ -4,8 +4,9 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE  "Test_case\\test_case_1-1\\input_1.txt"
+#define INPUTFILE  "Test_case\\test_case_1-2\\input_1.txt"
 #define OUTPUTFILE "output_1.txt"
+
 
 #define COUNT 10   // print 2D
 
@@ -168,8 +169,12 @@ nodePointer deleteNode(nodePointer root, int data){
 				free(deletePointer);
 				return NULL;
 			}else{									// not root
+				if(parent->left){					// left leaf
+					parent->left = NULL;
+				}else{								// right leaf
+					parent->right = NULL;
+				}
 				free(deletePointer);
-				parent->data = NULL;
 				return root;
 			}
 		}else if(deletePointer->left){				// have left tree 
@@ -239,7 +244,7 @@ void queryNode(nodePointer root, int data){
 				}
 			}else{								// node exist
 				//printf("deep : ");
-				printf("%d\n",deepth);
+				printf("node(%d) deep : %d\n",data, deepth);
 				break;
 			}
 		}
@@ -320,7 +325,8 @@ void printSum(nodePointer root, int pointA, int pointB){
 		if(isALegal && isBLegal){
 			total = total - root->data;
 			//printf("total:");
-			printf("%d\n",total);
+			//printf("%d\n",total);
+			printf("A(%d) to B(%d) sum : %d\n",pointA,pointB,total);
 		}
 	}
 }
