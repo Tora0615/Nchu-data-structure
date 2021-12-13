@@ -21,17 +21,11 @@ char stack[MAX_STACK_SIZE];
 int top = -1;
 
 int isFull(){
-  if(top > MAX_STACK_SIZE - 1){
-    return TRUE;
-  }
-  return FALSE;
+  return top > MAX_STACK_SIZE - 1;
 }
 
 int isEmpty(){
-  if(top == -1){
-    return TRUE;
-  }
-  return FALSE;
+  return top == -1;
 }
 
 
@@ -64,23 +58,16 @@ char pop(){
 /* -- Stack 相關 -- */
 
 
-
 /* -- Ans Stack 相關 -- */
 char ansStack[500];
 int ansTop = -1;
 
 int ansIsFull(){
-  if(ansTop > 500 - 1){
-    return TRUE;
-  }
-  return FALSE;
+  return ansTop > 500 - 1;
 }
 
 int ansIsEmpty(){
-  if(ansTop == -1){
-    return TRUE;
-  }
-  return FALSE;
+  return ansTop;
 }
 
 
