@@ -12,6 +12,9 @@
 #define OUTPUTFILE "output_2.txt"
 #define DEBUG 0
 
+FILE *f_read_ptr;
+FILE *f_write_ptr;
+
 int stringToInt(char *contents){
   	int index = 0, count = 0, isNegative = FALSE;
   	while(*(contents + index) != '\0' && *(contents + index) != '\r' && *(contents + index) != ' '){

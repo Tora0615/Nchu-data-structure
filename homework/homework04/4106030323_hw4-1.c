@@ -12,6 +12,8 @@
 #define OUTPUTFILE "output_1.txt"
 #define DEBUG 0
 
+FILE *f_read_ptr;
+FILE *f_write_ptr;
 
 int stringToInt(char *contents){
   	int index = 0, count = 0, isNegative = FALSE;
@@ -57,9 +59,35 @@ int main(int argc, char const *argv[]) {
 
 	char endLineBuf = ' ';
 	char *contents = (char*)malloc(sizeof(char)*5000000);
-	
+	int jobCount = -1, relationCount = -1, index = 0, i = 0, j=0;
+		
 	fscanf(f_read_ptr,"%[^\n]",contents);
 	endLineBuf = fgetc(f_read_ptr);
+	
+	jobCount = stringToInt(contents);
+	while(!isspace(contents[index++]));
+	relationCount = stringToInt(&contents[index]);
+	// printf("%d %d\n", jobCount, relationCount);
+	
+	// Creat use job count create 2-dimention Node array and init
+	int array[jobCount+1][jobCount+1];
+	for(i=0 ; i<jobCount+1 ; i++){
+		for(j=0 ; j<jobCount+1 ; j++){
+			array[i][j] = 0;
+		} 
+	} 
+	
+	// save data into array
+	for(i=0 ; i < relationCount ; i++){
+		fscanf(f_read_ptr,"%[^\n]",contents);
+		endLineBuf = fgetc(f_read_ptr);
+		index = 0;
+		int x = stringToInt(contents);
+		while(!isspace(contents[index++]));
+		int y = stringToInt(&contents[index]);
+		// printf("%d %d\n", x, y);
+		array[x][y] = 1;
+	}
 
 
 	fclose(f_read_ptr);
