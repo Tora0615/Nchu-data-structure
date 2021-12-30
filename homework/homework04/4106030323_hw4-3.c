@@ -5,7 +5,6 @@
 #define TRUE 1
 #define FALSE 0
 
-
 /* NEED Change Before upload*/
 #define INPUTFILE "Test_Case\\test_case_3-1\\input_3.txt"
 //#define INPUTFILE  "../Test_Case/test_case_3-1/input_3.txt"

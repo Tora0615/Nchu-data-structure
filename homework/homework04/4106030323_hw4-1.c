@@ -6,7 +6,7 @@
 #define FALSE 0
 
 /* NEED Change Before upload*/
-#define INPUTFILE "Test_Case\\test_case_1-1\\input_1.txt"
+#define INPUTFILE "Test_Case\\test_case_1-3\\input_1.txt"
 //#define INPUTFILE  "../Test_Case/test_case_1-1/input_1.txt"
 
 #define OUTPUTFILE "output_1.txt"
@@ -32,7 +32,37 @@ int stringToInt(char *contents){
 	return count;
 }
 
+void delNode(int *array, int *degree, int target, int range){
+	int i;
+	for (i=0 ; i < range ; i++){
+		if(*(array + target*range + i) != 0){
+			*(array + target*range + i) = 0;		// del connect
+			if (*(degree+i) > 0){
+				*(degree+i) = *(degree+i) - 1;		// del related degree 
+			}
+		}
+	}
+}
 
+void printArr(int *array, int jobCount){
+	int i, j;
+	// print array
+	for(i=0 ; i<jobCount ; i++){
+		for(j=0 ; j<jobCount ; j++){
+			printf("%d ",*(array + i*jobCount + j));
+		} 
+		printf("\n");
+	} 
+}
+
+void printDeg(int *degreeList, int jobCount){
+	int i;
+	printf("\n");
+	for(i=0 ; i<jobCount ; i++){
+		printf("%d ",degreeList[i]);
+	} 
+	printf("\n");
+}
 
 int main(int argc, char const *argv[]) {
 
@@ -53,13 +83,13 @@ int main(int argc, char const *argv[]) {
 		  fclose(f_read_ptr);
 		  exit(EXIT_FAILURE);
 		}
-	} /* else {
+	} else {
 		f_write_ptr = fopen(OUTPUTFILE,"w");
-	}*/
+	}
 
 	char endLineBuf = ' ';
 	char *contents = (char*)malloc(sizeof(char)*5000000);
-	int jobCount = -1, relationCount = -1, index = 0, i = 0, j=0;
+	int jobCount = -1, relationCount = -1, index = 0, i = 0, j=0, k=0;	// jobCount is node's count
 		
 	fscanf(f_read_ptr,"%[^\n]",contents);
 	endLineBuf = fgetc(f_read_ptr);
@@ -67,12 +97,12 @@ int main(int argc, char const *argv[]) {
 	jobCount = stringToInt(contents);
 	while(!isspace(contents[index++]));
 	relationCount = stringToInt(&contents[index]);
-	// printf("%d %d\n", jobCount, relationCount);
 	
-	// Creat use job count create 2-dimention Node array and init
-	int array[jobCount+1][jobCount+1];
-	for(i=0 ; i<jobCount+1 ; i++){
-		for(j=0 ; j<jobCount+1 ; j++){
+	// Use jobCount to create 2-dimention Node array and init it
+	int array[jobCount][jobCount];
+	
+	for(i=0 ; i<jobCount ; i++){
+		for(j=0 ; j<jobCount ; j++){
 			array[i][j] = 0;
 		} 
 	} 
@@ -86,9 +116,40 @@ int main(int argc, char const *argv[]) {
 		while(!isspace(contents[index++]));
 		int y = stringToInt(&contents[index]);
 		// printf("%d %d\n", x, y);
-		array[x][y] = 1;
+		array[x-1][y-1] = 1;
 	}
+	
+	/* ---- calculate degree ---- */
+	int degreeList[jobCount];
+	// init list
+	for(i=0 ; i<jobCount ; i++){
+		degreeList[i] = 0;
+	}
+	// calulate
+	for(j=0 ; j<jobCount ; j++){
+		for(i=0 ; i<jobCount ; i++){
+			if (array[i][j] == 1){
+				degreeList[j] += 1;
+			}
+		}
+	} 
+	
 
+	
+	// find answers
+	for(i=0 ; i<jobCount ; i++){
+		for (j=0 ; j < jobCount ; j++){
+			if (degreeList[j] == 0){
+				//printf("%d ", j+1);
+				fprintf(f_write_ptr, "%d ", j+1);
+				degreeList[j] = -1;
+				delNode(array, degreeList, j, jobCount);
+				break;
+			}
+		}
+	} 
+	//printf("\n");
+	
 
 	fclose(f_read_ptr);
 	fclose(f_write_ptr);
@@ -96,3 +157,6 @@ int main(int argc, char const *argv[]) {
 	printf("Complete !\n");
 	return 0;
 }
+
+
+// key word : topological sort
