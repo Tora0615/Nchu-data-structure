@@ -6,14 +6,16 @@
 #define FALSE 0
 
 /* NEED Change Before upload*/
-#define INPUTFILE "Test_Case\\test_case_1-3\\input_1.txt"
+//#define INPUTFILE "Test_Case\\test_case_1-1\\input_1.txt"
 //#define INPUTFILE  "../Test_Case/test_case_1-1/input_1.txt"
+#define INPUTFILE "input_1.txt"
 
 #define OUTPUTFILE "output_1.txt"
 #define DEBUG 0
 
 FILE *f_read_ptr;
 FILE *f_write_ptr;
+
 
 int stringToInt(char *contents){
   	int index = 0, count = 0, isNegative = FALSE;
@@ -135,20 +137,47 @@ int main(int argc, char const *argv[]) {
 	} 
 	
 
+	int ansArr[jobCount];
+	int saveIndex = 0; 
 	
-	// find answers
+	// find answers 
 	for(i=0 ; i<jobCount ; i++){
 		for (j=0 ; j < jobCount ; j++){
 			if (degreeList[j] == 0){
 				//printf("%d ", j+1);
-				fprintf(f_write_ptr, "%d ", j+1);
+				ansArr[saveIndex] = j+1;
+				saveIndex += 1;
 				degreeList[j] = -1;
-				delNode(array, degreeList, j, jobCount);
+				delNode(array, degreeList, j, jobCount); 
 				break;
 			}
 		}
 	} 
 	//printf("\n");
+	
+	
+	// check and print
+	int isLegal = TRUE;
+	for(i=0 ; i<jobCount ; i++){
+		for (j=0 ; j < jobCount ; j++){
+			if (array[i][j] != 0){
+				isLegal = FALSE;
+				break;
+			}
+		}
+		if(!isLegal){
+			break;
+		}
+	}
+	if(!isLegal){
+		//printf("not exist");
+		fprintf(f_write_ptr,"not exist");
+	}else{
+		for(i=0 ; i<jobCount ; i++){
+			//printf("%d ", ansArr[i]+1);
+			fprintf(f_write_ptr, "%d ", ansArr[i]);
+		}
+	}
 	
 
 	fclose(f_read_ptr);
