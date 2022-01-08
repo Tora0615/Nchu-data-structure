@@ -11,6 +11,7 @@ int top, ansTop;
 
 int getLevel(char input){
   if(input == ')' || input == '('){
+  	/* ')' in stack*/
     if(stack[top] == ')'){
       return 0;
     }
@@ -125,10 +126,6 @@ void prefix(char *content){
 }
 
 
-
-
-
-
 int main(void){
 	FILE *f_read_ptr;
 	if(!(f_read_ptr = fopen(INPUTFILE,"r"))){
@@ -154,4 +151,4 @@ int main(void){
 
 
 
-// reverse read -> to postorder -> reverse 
+// reverse read -> to postorder -> reverse print (ansStack pop)
