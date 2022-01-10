@@ -4,8 +4,8 @@
 #include <string.h>
 #define TRUE 1
 #define FALSE 0
-//#define INPUTFILE "Test_case\\test_case_2-2\\input_2.txt"
-#define INPUTFILE  "../Test_case/test_case_2-2/input_2.txt"
+#define INPUTFILE "Test_case\\test_case_2-1\\input_2.txt"
+//#define INPUTFILE  "../Test_case/test_case_2-2/input_2.txt"
 #define OUTPUTFILE "output_2.txt"
 
 FILE *f_read_ptr;
