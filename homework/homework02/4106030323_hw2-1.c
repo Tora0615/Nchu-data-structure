@@ -33,7 +33,7 @@ void reverseGroupOfXItems(int);
 
 int main(int argc, char const *argv[]) {
   FILE *f_read_ptr;
-  const char *filename_input = "testData\\test_case_1-3\\input_1.txt"; // 要注意 input file path
+  const char *filename_input = "testData\\test_case_1-1\\input_0.txt"; // 要注意 input file path
 
   // input file open
   if (!(f_read_ptr = fopen(filename_input,"r"))){

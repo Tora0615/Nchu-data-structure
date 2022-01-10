@@ -6,9 +6,9 @@
 #define FALSE 0
 
 /* NEED Change Before upload*/
-//#define INPUTFILE "Test_Case\\test_case_3-1\\input_3.txt"
+#define INPUTFILE "Test_Case\\test_case_3-1\\input_3.txt"
 //#define INPUTFILE  "../Test_Case/test_case_3-1/input_3.txt"
-#define INPUTFILE "input_3.txt"
+//#define INPUTFILE "input_3.txt"
 
 #define OUTPUTFILE "output_3.txt"
 #define DEBUG 0
@@ -28,6 +28,7 @@ int mincost,N,L;
 void ans (void){
 	int temp=0,i;
 	for(i = 0 ;i<N;i++){
+		// cost = bolcksize * colorcost
 		temp+=size[i]*color[x[i]].cost;
 	}
 	if(temp < mincost){
