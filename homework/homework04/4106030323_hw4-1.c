@@ -6,9 +6,9 @@
 #define FALSE 0
 
 /* NEED Change Before upload*/
-//#define INPUTFILE "Test_Case\\test_case_1-1\\input_1.txt"
+#define INPUTFILE "Test_Case\\test_case_1-1\\input_1.txt"
 //#define INPUTFILE  "../Test_Case/test_case_1-1/input_1.txt"
-#define INPUTFILE "input_1.txt"
+//#define INPUTFILE "input_1.txt"
 
 #define OUTPUTFILE "output_1.txt"
 #define DEBUG 0
@@ -170,11 +170,11 @@ int main(int argc, char const *argv[]) {
 		}
 	}
 	if(!isLegal){
-		//printf("not exist");
+		printf("not exist");
 		fprintf(f_write_ptr,"not exist");
 	}else{
 		for(i=0 ; i<jobCount ; i++){
-			//printf("%d ", ansArr[i]+1);
+			printf("%d ", ansArr[i]);
 			fprintf(f_write_ptr, "%d ", ansArr[i]);
 		}
 	}
