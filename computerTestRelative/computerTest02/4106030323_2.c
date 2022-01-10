@@ -13,7 +13,6 @@ typedef struct _node{
 }node;
 node **adjMatrix;
 int *orderArr;
-int **recordList;
 int *totalCostList;
 int nodeCount;
 int *visited;
@@ -47,19 +46,7 @@ int dfs (int node, int len){
 /* create a node to other nodes' cost*/
 void getVisitCost(){
 	/* init recordList*/
-	int i, j;
-	// malloc 
-	recordList = (int**)malloc(sizeof(int*) * nodeCount);
-	for(i=0; i<nodeCount; i++){
-		recordList[i] = (int*)malloc(sizeof(int) * nodeCount);
-	}
-	// set value to max
-	for(i=0; i<nodeCount; i++){
-		for(j=0; j<nodeCount; j++){
-			recordList[i][j] = INT_MAX;
-		}
-	}
-	
+	int i, j;	
 	
 	/* visited list */
 	visited = (int*)malloc(sizeof(int) * nodeCount);
