@@ -1,0 +1,8 @@
+6 6
+1 2 3 4 5 6
+add 9
+add 8
+rev 3
+del 1
+ins 3 11
+show
