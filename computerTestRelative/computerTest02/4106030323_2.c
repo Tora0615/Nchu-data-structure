@@ -5,7 +5,8 @@
 #include <limits.h>
 #define TRUE 1
 #define FALSE 0
-#define INPUTFILE "TestData\\test_case_2-3\\input_2.txt"
+//#define INPUTFILE "TestData\\test_case_2-3\\input_2.txt"
+#define INPUTFILE "TestData\\5\\input_5-5.txt"
 
 typedef struct _node{
 	int isLinked;
@@ -18,29 +19,22 @@ int nodeCount;
 int *visited;
 
 
-int dfs (int node, int len){ 
+void dfs (int node, int len, int order){ 
 	visited[node] = TRUE;
-	int i, returnVal = 0;	
+	int i;
 		
 	/* find another nodes linked with input node*/
 	/* in tail will not go to dfs*/
 	for(i=0; i<nodeCount; i++){
 		/* isLinked and not visited */
 		if(adjMatrix[node][i].isLinked == 1 && visited[i]==FALSE){
-			/* add catched return value*/
-			returnVal = returnVal + dfs(i, adjMatrix[node][i].len + len);
+			/* pass next node, add len, start point's order */
+			dfs(i, adjMatrix[node][i].len + len, order);
 		}
 	}
 	
-	/* check this node have order or not -> if have -> return this node's cost */
-	if(orderArr[node]){
-		/* current cost = len * order * 2 */
-		return (len * orderArr[node] * 2) + returnVal;
-	}
-	/* if don't have : return origin value*/
-	else{
-		return returnVal;
-	}
+	/* direct write to totalCostList */
+	totalCostList[node] = totalCostList[node] + order*len*2;
 }
 
 /* create a node to other nodes' cost*/
@@ -52,16 +46,16 @@ void getVisitCost(){
 	visited = (int*)malloc(sizeof(int) * nodeCount);
 	
 	/* calculate */ 
-	totalCostList = (int*)malloc(sizeof(int) * nodeCount);
 	for(i=0; i<nodeCount; i++){	
 		/* reset visited array*/
 		for(j=0; j<nodeCount; j++){
 			visited[j] = FALSE;
 		}
 		/* dfs : set node i as start point, and pass current len */
-		/* dfs(start node, len)*/
-		totalCostList[i] = dfs (i, 0);
-		//printf("%d\n",totalCostList[i]);
+		/* dfs(start node, len, order)*/
+		if(orderArr[i]){
+			dfs(i, 0, orderArr[i]);
+		}
 	}
 }
 
@@ -110,6 +104,7 @@ int main(void){
 	}
 	
 	/* calculate point to point cost */
+	totalCostList = (int*)malloc(sizeof(int) * nodeCount);
 	getVisitCost();
 	
 	/* find min */
